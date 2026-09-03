@@ -1,7 +1,6 @@
 'use client';
 
 import { ArrowRight, Check, FlaskConical, RotateCcw, Sparkles, Star } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getProgress } from '@/lib/progress';
 
@@ -48,10 +47,10 @@ export default function Home() {
     <main className="home-page">
       <div className="sky-grid" aria-hidden="true" />
       <header className="site-header">
-        <Link className="brand" href="/" aria-label="콩콩 과학실험실 홈">
+        <a className="brand" href="/" aria-label="콩콩 과학실험실 홈">
           <span className="brand-icon"><FlaskConical size={25} strokeWidth={2.5} /></span>
           <span>콩콩 과학실험실</span>
-        </Link>
+        </a>
         <div className="star-meter" aria-label={`별 ${completed.length}개 중 3개`}>
           <Star size={21} fill="currentColor" /><span>나의 별</span><strong>{completed.length} / 3</strong>
         </div>
@@ -70,7 +69,7 @@ export default function Home() {
         <section className="completion-banner" aria-live="polite">
           <div className="completion-medal">🏅</div>
           <div><span>오늘의 꼬마 과학자!</span><strong>3개의 실험을 모두 완료했어요!</strong></div>
-          <Link href="/discoveries">내가 발견한 것 <ArrowRight size={20} /></Link>
+          <a href="/discoveries">내가 발견한 것 <ArrowRight size={20} /></a>
         </section>
       )}
 
@@ -90,9 +89,9 @@ export default function Home() {
                 <p>{experiment.prompt}</p>
                 <div className="card-footer">
                   <span className="level"><Star size={17} fill="currentColor" /> {experiment.level}</span>
-                  <Link className="start-button" href={`/experiment/${experiment.id}`}>
+                  <a className="start-button" href={`/experiment/${experiment.id}`}>
                     {isComplete ? <RotateCcw size={20} /> : <FlaskConical size={20} />}{isComplete ? '다시 하기' : '실험 시작'}
-                  </Link>
+                  </a>
                 </div>
               </article>
             );

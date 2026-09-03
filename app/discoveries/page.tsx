@@ -1,7 +1,6 @@
 'use client';
 
 import { ArrowLeft, FlaskConical, RotateCcw, Star } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getProgress, resetProgress } from '@/lib/progress';
 
@@ -24,7 +23,7 @@ export default function Discoveries() {
   }
 
   return <main className="discoveries-page">
-    <header className="experiment-header"><Link href="/" className="home-link"><ArrowLeft size={23} /><span>실험실로</span></Link><div className="experiment-title"><FlaskConical size={22} />나의 발견</div><div className="compact-stars"><Star size={20} fill="currentColor" /> {completed.length} / 3</div></header>
+    <header className="experiment-header"><a href="/" className="home-link"><ArrowLeft size={23} /><span>실험실로</span></a><div className="experiment-title"><FlaskConical size={22} />나의 발견</div><div className="compact-stars"><Star size={20} fill="currentColor" /> {completed.length} / 3</div></header>
     <section className="stickerbook">
       <div className="sticker-title"><span>🎉 🔬 ⭐</span><h1>{completed.length === 3 ? '오늘의 꼬마 과학자!' : '나의 과학 스티커북'}</h1><p>{completed.length === 3 ? '3개의 실험을 모두 완료했어요!' : '실험하면 발견 스티커가 열려요.'}</p>{completed.length === 3 && <strong>🏅 꼬마 과학자</strong>}</div>
       <div className="discovery-cards">
@@ -33,7 +32,7 @@ export default function Discoveries() {
           return <article className={`discovery-card ${item.className} ${unlocked ? '' : 'locked'}`} key={item.id}><span className="discovery-number">{item.number}</span><div className="discovery-icon">{unlocked ? item.icon : '🔒'}</div><h2>{unlocked ? item.title : '아직 비밀이에요'}</h2><p>{unlocked ? item.text : '실험을 마치면 발견할 수 있어!'}</p>{unlocked && <span className="sticker-star">★ 발견 완료</span>}</article>;
         })}
       </div>
-      <div className="sticker-actions"><Link href="/"><ArrowLeft size={22} /> 다른 실험 하기</Link>{completed.length > 0 && <button onClick={restart}><RotateCcw size={22} /> 다시 실험하기</button>}</div>
+      <div className="sticker-actions"><a href="/"><ArrowLeft size={22} /> 다른 실험 하기</a>{completed.length > 0 && <button onClick={restart}><RotateCcw size={22} /> 다시 실험하기</button>}</div>
     </section>
   </main>;
 }

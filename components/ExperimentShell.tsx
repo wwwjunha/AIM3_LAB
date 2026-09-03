@@ -1,7 +1,6 @@
 'use client';
 
 import { FlaskConical, Home, Star } from 'lucide-react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getProgress, resetProgress, startExperiment } from '@/lib/progress';
 import type { ExperimentId, ProgressSnapshot } from '@/types/experiment';
@@ -30,7 +29,7 @@ export function ExperimentShell({ id, title, step, accent, children }: { id: Exp
   return (
     <main className={`experiment-page ${accent}`}>
       <header className="experiment-header">
-        <Link href="/" className="home-link" aria-label="실험실 홈으로"><Home size={23} /><span>실험실 홈</span></Link>
+        <a href="/" className="home-link" aria-label="실험실 홈으로"><Home size={23} /><span>실험실 홈</span></a>
         <div className="experiment-title"><FlaskConical size={22} />{title}</div>
         <div className="compact-stars"><Star size={20} fill="currentColor" /> {snapshot?.totalStars ?? 0} / 3</div>
       </header>
