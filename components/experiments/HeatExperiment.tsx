@@ -16,7 +16,7 @@ export default function HeatExperiment() {
     setStep(0); setPrediction(''); setTime(0);
   }
 
-  if (step === 4) return <ExperimentShell id="heat" title="온도 연구소" step={4} accent="heat-theme"><SuccessScreen id="heat" title="온도 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="heat" title="온도 연구소" step={4} accent="heat-theme"><SuccessScreen id="heat" title="온도 연구소" report={{ title: '온도 연구소', question: '얼음은 어디에서 더 빨리 녹을까?', prediction, observations: ['같은 크기의 얼음을 따뜻한 곳과 서늘한 곳에서 같은 시간 동안 관찰했어요.', '따뜻한 곳의 얼음이 더 빠르게 작아졌어요.'], discovery: '얼음은 주변 온도가 더 높은 곳에서 더 빨리 녹아요.', skills: ['조건 통제하기', '시간에 따른 변화 보기', '빠르기 비교하기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="heat" title="온도 연구소" step={step} accent="heat-theme">
     {step === 0 && <section className="question-screen">

@@ -31,7 +31,7 @@ export default function SoundExperiment() {
     window.setTimeout(() => setActive((current) => current === id ? null : current), 820);
   }
 
-  if (step === 4) return <ExperimentShell id="sound" title="소리 연구소" step={4} accent="sound-theme"><SuccessScreen id="sound" title="소리 연구소" onRetry={() => { setStep(0); setPlayed([]); }} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="sound" title="소리 연구소" step={4} accent="sound-theme"><SuccessScreen id="sound" title="소리 연구소" report={{ title: '소리 연구소', question: '고무줄을 튕기면 줄은 어떻게 될까?', prediction, observations: ['길이가 다른 고무줄 세 개를 모두 튕겨 보았어요.', '고무줄이 떨리면서 소리가 났어요.', '줄의 조건에 따라 높고 낮은 소리가 달라졌어요.'], discovery: '소리가 나는 물체에는 떨림이 있고, 조건을 바꾸면 높고 낮은 소리를 만들 수 있어요.', skills: ['소리 비교하기', '떨림 관찰하기', '규칙 찾기'] }} onRetry={() => { setStep(0); setPlayed([]); }} /></ExperimentShell>;
 
   return (
     <ExperimentShell id="sound" title="소리 연구소" step={step} accent="sound-theme">

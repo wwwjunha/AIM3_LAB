@@ -22,7 +22,7 @@ export default function EarthExperiment() {
     setStep(0); setPrediction(''); setTested([]);
   }
 
-  if (step === 4) return <ExperimentShell id="earth" title="땅 연구소" step={4} accent="earth-theme"><SuccessScreen id="earth" title="땅 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="earth" title="땅 연구소" step={4} accent="earth-theme"><SuccessScreen id="earth" title="땅 연구소" report={{ title: '땅 연구소', question: '어느 비탈에서 흙이 더 많이 움직일까?', prediction, observations: ['완만한 비탈과 가파른 비탈에 같은 양의 비를 내렸어요.', '가파른 비탈의 흙이 아래로 더 많이 움직였어요.'], discovery: '흐르는 물은 흙을 옮겨 땅의 모습을 바꾸고, 가파른 곳에서는 흙이 더 많이 움직일 수 있어요.', skills: ['공정하게 비교하기', '이동 거리 비교하기', '원인과 결과 찾기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="earth" title="땅 연구소" step={step} accent="earth-theme">
     {step === 0 && <section className="question-screen">

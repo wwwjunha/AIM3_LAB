@@ -19,7 +19,7 @@ export default function PlantExperiment() {
     setStep(0); setPrediction(''); setColor(colors[1]); setTime(0);
   }
 
-  if (step === 4) return <ExperimentShell id="plant" title="식물 연구소" step={4} accent="plant-theme"><SuccessScreen id="plant" title="식물 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="plant" title="식물 연구소" step={4} accent="plant-theme"><SuccessScreen id="plant" title="식물 연구소" report={{ title: '식물 연구소', question: '색깔 물은 식물의 어디로 갈까?', prediction, observations: [`${color.name}색 물에 꽃을 꽂고 시간에 따른 변화를 관찰했어요.`, '줄기를 따라 색깔 물이 올라가 꽃잎 가장자리에도 색이 보였어요.'], discovery: '식물의 줄기는 물을 위쪽 잎과 꽃까지 옮겨요.', skills: ['시간에 따른 변화 보기', '색 변화 관찰하기', '이동 경로 추리하기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="plant" title="식물 연구소" step={step} accent="plant-theme">
     {step === 0 && <section className="question-screen">

@@ -39,7 +39,7 @@ export default function ForceExperiment() {
     dragStart.current = null;
   }
 
-  if (step === 4) return <ExperimentShell id="force" title="힘 연구소" step={4} accent="force-theme"><SuccessScreen id="force" title="힘 연구소" onRetry={() => { setStep(0); setTravel({ light: 0, heavy: 0 }); setTested([]); }} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="force" title="힘 연구소" step={4} accent="force-theme"><SuccessScreen id="force" title="힘 연구소" report={{ title: '힘 연구소', question: '어떤 상자가 밀기 더 쉬울까?', prediction, observations: ['가벼운 상자와 무거운 상자를 모두 밀어 보았어요.', '가벼운 상자는 조금만 밀어도 움직였고, 무거운 상자는 더 큰 힘이 필요했어요.'], discovery: '무거운 물체를 밀 때는 더 큰 힘이 필요할 수 있어요.', skills: ['예상하기', '힘 비교하기', '관찰하기'] }} onRetry={() => { setStep(0); setTravel({ light: 0, heavy: 0 }); setTested([]); }} /></ExperimentShell>;
 
   return (
     <ExperimentShell id="force" title="힘 연구소" step={step} accent="force-theme">

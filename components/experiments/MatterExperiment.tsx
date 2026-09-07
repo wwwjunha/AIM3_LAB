@@ -25,7 +25,7 @@ export default function MatterExperiment() {
   }
 
   const enough = tested.water.length >= 2 && tested.rock.length >= 2;
-  if (step === 4) return <ExperimentShell id="matter" title="물질 연구소" step={4} accent="matter-theme"><SuccessScreen id="matter" title="물질 연구소" onRetry={() => { setStep(0); setContents({}); setTested({ water: [], rock: [] }); }} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="matter" title="물질 연구소" step={4} accent="matter-theme"><SuccessScreen id="matter" title="물질 연구소" report={{ title: '물질 연구소', question: '컵을 바꾸면 물의 모양도 바뀔까?', prediction, observations: [`물을 ${tested.water.length}개의 그릇에 옮겨 모양을 비교했어요.`, `돌을 ${tested.rock.length}개의 그릇에 옮겨 모양을 비교했어요.`, '물은 그릇을 따라 모양이 달라졌지만 돌은 자기 모양을 유지했어요.'], discovery: '액체는 담는 그릇에 따라 모양이 달라지고, 고체는 자기 모양을 유지해요.', skills: ['분류하기', '모양 비교하기', '관찰하기'] }} onRetry={() => { setStep(0); setContents({}); setTested({ water: [], rock: [] }); }} /></ExperimentShell>;
 
   return (
     <ExperimentShell id="matter" title="물질 연구소" step={step} accent="matter-theme">

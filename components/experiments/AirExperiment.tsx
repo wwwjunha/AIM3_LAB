@@ -22,7 +22,7 @@ export default function AirExperiment() {
     setStep(0); setPrediction(''); setCup('ready'); setTested([]);
   }
 
-  if (step === 4) return <ExperimentShell id="air" title="공기 연구소" step={4} accent="air-theme"><SuccessScreen id="air" title="공기 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="air" title="공기 연구소" step={4} accent="air-theme"><SuccessScreen id="air" title="공기 연구소" report={{ title: '공기 연구소', question: '컵 속 휴지는 물에 젖을까?', prediction, observations: ['컵을 똑바로 물에 넣었을 때 휴지가 마른 채로 있었어요.', '컵을 기울이자 공기 방울이 나오고 물이 컵 안으로 들어갔어요.'], discovery: '눈에 잘 보이지 않는 공기도 자리를 차지해요.', skills: ['조건 바꾸기', '변화 관찰하기', '까닭 설명하기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="air" title="공기 연구소" step={step} accent="air-theme">
     {step === 0 && <section className="question-screen">

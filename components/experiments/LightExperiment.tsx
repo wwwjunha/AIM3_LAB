@@ -24,7 +24,7 @@ export default function LightExperiment() {
     setStep(0); setPrediction(''); setDistance(50); setTested([]);
   }
 
-  if (step === 4) return <ExperimentShell id="light" title="빛 연구소" step={4} accent="light-theme"><SuccessScreen id="light" title="빛 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="light" title="빛 연구소" step={4} accent="light-theme"><SuccessScreen id="light" title="빛 연구소" report={{ title: '빛 연구소', question: '손전등을 가까이 가져가면 그림자 크기는 어떻게 될까?', prediction, observations: ['손전등을 물체 가까이와 멀리 모두 움직여 보았어요.', '빛이 가까울 때 그림자가 커지고 멀 때 작아졌어요.'], discovery: '빛과 물체 사이의 거리에 따라 그림자 크기가 달라져요.', skills: ['거리 조절하기', '크기 비교하기', '관찰하기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="light" title="빛 연구소" step={step} accent="light-theme">
     {step === 0 && <section className="question-screen">

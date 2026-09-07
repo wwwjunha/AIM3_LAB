@@ -1,4 +1,4 @@
-import { experimentIds, type ExperimentId, type ExperimentRecord, type ProgressSnapshot } from '@/types/experiment';
+import { experimentIds, type ExperimentId, type ExperimentRecord, type ExperimentReportInput, type ProgressSnapshot } from '@/types/experiment';
 
 const emptyRecord = (): ExperimentRecord => ({ retryCount: 0 });
 
@@ -27,10 +27,22 @@ export function startExperiment(id: ExperimentId) {
   localStorage.setItem(`${id}Record`, JSON.stringify(next));
 }
 
-export function completeExperiment(id: ExperimentId) {
+export function completeExperiment(id: ExperimentId, report: ExperimentReportInput) {
   const current = getProgress().records[id];
+  const completedAt = current.completedAt || new Date().toISOString();
   localStorage.setItem(`${id}Completed`, 'true');
-  localStorage.setItem(`${id}Record`, JSON.stringify({ ...current, completedAt: current.completedAt || new Date().toISOString() }));
+  localStorage.setItem(`${id}Record`, JSON.stringify({
+    ...current,
+    completedAt,
+    report: {
+      ...report,
+      experimentId: id,
+      startedAt: current.startedAt || completedAt,
+      completedAt,
+      retryCount: current.retryCount,
+      completedSteps: 4,
+    },
+  }));
   const total = experimentIds.filter((item) => localStorage.getItem(`${item}Completed`) === 'true').length;
   localStorage.setItem('totalStars', String(total));
 }

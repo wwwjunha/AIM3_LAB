@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowLeft, FlaskConical, RotateCcw, Star } from 'lucide-react';
+import { ArrowLeft, FileText, FlaskConical, RotateCcw, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getProgress, resetProgress } from '@/lib/progress';
 
@@ -35,7 +35,7 @@ export default function Discoveries() {
       <div className="discovery-cards">
         {discoveries.map((item) => {
           const unlocked = completed.includes(item.id);
-          return <article className={`discovery-card ${item.className} ${unlocked ? '' : 'locked'}`} key={item.id}><span className="discovery-number">{item.number}</span><div className="discovery-icon">{unlocked ? item.icon : '🔒'}</div><h2>{unlocked ? item.title : '아직 비밀이에요'}</h2><p>{unlocked ? item.text : '실험을 마치면 발견할 수 있어!'}</p>{unlocked && <span className="sticker-star">★ 발견 완료</span>}</article>;
+          return <article className={`discovery-card ${item.className} ${unlocked ? '' : 'locked'}`} key={item.id}><span className="discovery-number">{item.number}</span><div className="discovery-icon">{unlocked ? item.icon : '🔒'}</div><h2>{unlocked ? item.title : '아직 비밀이에요'}</h2><p>{unlocked ? item.text : '실험을 마치면 발견할 수 있어!'}</p>{unlocked && <div className="discovery-card-actions"><span>★ 발견 완료</span><a href={`/reports?id=${item.id}`}><FileText size={17} /> 리포트 보기</a></div>}</article>;
         })}
       </div>
       <div className="sticker-actions"><a href="/"><ArrowLeft size={22} /> 다른 실험 하기</a>{completed.length > 0 && <button onClick={restart}><RotateCcw size={22} /> 다시 실험하기</button>}</div>

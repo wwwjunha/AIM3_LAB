@@ -29,7 +29,7 @@ export default function MagnetExperiment() {
     setTested([]);
   }
 
-  if (step === 4) return <ExperimentShell id="magnet" title="자석 연구소" step={4} accent="magnet-theme"><SuccessScreen id="magnet" title="자석 연구소" onRetry={retry} /></ExperimentShell>;
+  if (step === 4) return <ExperimentShell id="magnet" title="자석 연구소" step={4} accent="magnet-theme"><SuccessScreen id="magnet" title="자석 연구소" report={{ title: '자석 연구소', question: '어떤 물체가 자석에 붙을까?', prediction, observations: ['철 클립, 철 나사, 나무 블록, 플라스틱 숟가락을 모두 시험했어요.', '철 클립과 철 나사는 붙었고 나무와 플라스틱은 붙지 않았어요.'], discovery: '자석은 모든 물체가 아니라 철로 된 물체를 끌어당길 수 있어요.', skills: ['재료 분류하기', '예상과 결과 비교하기', '관찰하기'] }} onRetry={retry} /></ExperimentShell>;
 
   return <ExperimentShell id="magnet" title="자석 연구소" step={step} accent="magnet-theme">
     {step === 0 && <section className="question-screen">
