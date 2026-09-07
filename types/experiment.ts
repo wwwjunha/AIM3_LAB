@@ -1,4 +1,6 @@
-export type ExperimentId = 'force' | 'matter' | 'sound';
+export const experimentIds = ['force', 'matter', 'sound', 'magnet', 'light', 'air', 'heat', 'plant', 'earth'] as const;
+
+export type ExperimentId = (typeof experimentIds)[number];
 
 export type ExperimentRecord = {
   startedAt?: string;
@@ -6,10 +8,7 @@ export type ExperimentRecord = {
   retryCount: number;
 };
 
-export type ProgressSnapshot = {
-  forceCompleted: boolean;
-  matterCompleted: boolean;
-  soundCompleted: boolean;
+export type ProgressSnapshot = Record<`${ExperimentId}Completed`, boolean> & {
   totalStars: number;
   records: Record<ExperimentId, ExperimentRecord>;
 };

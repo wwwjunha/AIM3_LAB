@@ -3,7 +3,7 @@
 import { FlaskConical, Home, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getProgress, resetProgress, startExperiment } from '@/lib/progress';
-import type { ExperimentId, ProgressSnapshot } from '@/types/experiment';
+import { experimentIds, type ExperimentId, type ProgressSnapshot } from '@/types/experiment';
 
 const stepNames = ['궁금해요', '예상해요', '실험해요', '발견했어요', '성공!'];
 
@@ -31,7 +31,7 @@ export function ExperimentShell({ id, title, step, accent, children }: { id: Exp
       <header className="experiment-header">
         <a href="/" className="home-link" aria-label="실험실 홈으로"><Home size={23} /><span>실험실 홈</span></a>
         <div className="experiment-title"><FlaskConical size={22} />{title}</div>
-        <div className="compact-stars"><Star size={20} fill="currentColor" /> {snapshot?.totalStars ?? 0} / 3</div>
+        <div className="compact-stars"><Star size={20} fill="currentColor" /> {snapshot?.totalStars ?? 0} / {experimentIds.length}</div>
       </header>
       <nav className="stepper" aria-label="실험 진행 단계">
         {stepNames.map((name, index) => <div className={index === step ? 'current' : index < step ? 'done' : ''} key={name}><span>{index < step ? '✓' : index + 1}</span><strong>{name}</strong></div>)}
@@ -41,8 +41,8 @@ export function ExperimentShell({ id, title, step, accent, children }: { id: Exp
         <aside className="debug-panel">
           <strong>DEBUG</strong>
           <span>현재 실험: {id} / 단계 {step + 1}</span>
-          <span>별: {snapshot.totalStars} / 3</span>
-          {(['force', 'matter', 'sound'] as ExperimentId[]).map((item) => <span key={item}>{item}: {snapshot[`${item}Completed`] ? '완료' : '진행 전'} / 재시도 {snapshot.records[item].retryCount}</span>)}
+          <span>별: {snapshot.totalStars} / {experimentIds.length}</span>
+          {experimentIds.map((item) => <span key={item}>{item}: {snapshot[`${item}Completed`] ? '완료' : '진행 전'} / 재시도 {snapshot.records[item].retryCount}</span>)}
           <button onClick={clear}>localStorage 초기화</button>
         </aside>
       )}

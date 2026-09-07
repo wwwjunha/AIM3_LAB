@@ -1,16 +1,14 @@
-import type { ExperimentId, ExperimentRecord, ProgressSnapshot } from '@/types/experiment';
-
-const ids: ExperimentId[] = ['force', 'matter', 'sound'];
+import { experimentIds, type ExperimentId, type ExperimentRecord, type ProgressSnapshot } from '@/types/experiment';
 
 const emptyRecord = (): ExperimentRecord => ({ retryCount: 0 });
 
 export function getProgress(): ProgressSnapshot {
-  if (typeof window === 'undefined') {
-    return { forceCompleted: false, matterCompleted: false, soundCompleted: false, totalStars: 0, records: { force: emptyRecord(), matter: emptyRecord(), sound: emptyRecord() } };
-  }
+  const blankCompleted = Object.fromEntries(experimentIds.map((id) => [`${id}Completed`, false])) as Record<`${ExperimentId}Completed`, boolean>;
+  const blankRecords = Object.fromEntries(experimentIds.map((id) => [id, emptyRecord()])) as Record<ExperimentId, ExperimentRecord>;
+  if (typeof window === 'undefined') return { ...blankCompleted, totalStars: 0, records: blankRecords };
 
-  const completed = Object.fromEntries(ids.map((id) => [`${id}Completed`, localStorage.getItem(`${id}Completed`) === 'true'])) as Record<`${ExperimentId}Completed`, boolean>;
-  const records = Object.fromEntries(ids.map((id) => {
+  const completed = Object.fromEntries(experimentIds.map((id) => [`${id}Completed`, localStorage.getItem(`${id}Completed`) === 'true'])) as Record<`${ExperimentId}Completed`, boolean>;
+  const records = Object.fromEntries(experimentIds.map((id) => {
     try {
       return [id, JSON.parse(localStorage.getItem(`${id}Record`) || '') as ExperimentRecord];
     } catch {
@@ -18,7 +16,7 @@ export function getProgress(): ProgressSnapshot {
     }
   })) as Record<ExperimentId, ExperimentRecord>;
 
-  return { ...completed, totalStars: ids.filter((id) => completed[`${id}Completed`]).length, records };
+  return { ...completed, totalStars: experimentIds.filter((id) => completed[`${id}Completed`]).length, records };
 }
 
 export function startExperiment(id: ExperimentId) {
@@ -33,12 +31,12 @@ export function completeExperiment(id: ExperimentId) {
   const current = getProgress().records[id];
   localStorage.setItem(`${id}Completed`, 'true');
   localStorage.setItem(`${id}Record`, JSON.stringify({ ...current, completedAt: current.completedAt || new Date().toISOString() }));
-  const total = ids.filter((item) => localStorage.getItem(`${item}Completed`) === 'true').length;
+  const total = experimentIds.filter((item) => localStorage.getItem(`${item}Completed`) === 'true').length;
   localStorage.setItem('totalStars', String(total));
 }
 
 export function resetProgress() {
-  ids.forEach((id) => {
+  experimentIds.forEach((id) => {
     localStorage.removeItem(`${id}Completed`);
     localStorage.removeItem(`${id}Record`);
   });

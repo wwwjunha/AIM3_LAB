@@ -3,11 +3,18 @@
 import { ArrowRight, Check, FlaskConical, RotateCcw, Sparkles, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getProgress } from '@/lib/progress';
+import { experimentIds } from '@/types/experiment';
 
 const experiments = [
   { id: 'force', title: '힘 연구소', prompt: '밀어보면 뭐가 다를까?', level: '쉬워요', mark: '📦', accent: 'var(--force)', pale: 'var(--force-pale)' },
   { id: 'matter', title: '물질 연구소', prompt: '물과 돌을 비교해보자!', level: '쉬워요', mark: '💧', accent: 'var(--matter)', pale: 'var(--matter-pale)' },
   { id: 'sound', title: '소리 연구소', prompt: '고무줄 기타를 연주해보자!', level: '도전!', mark: '🎸', accent: 'var(--sound)', pale: 'var(--sound-pale)' },
+  { id: 'magnet', title: '자석 연구소', prompt: '어떤 물체가 자석에 붙을까?', level: '쉬워요', mark: '🧲', accent: 'var(--magnet)', pale: 'var(--magnet-pale)' },
+  { id: 'light', title: '빛 연구소', prompt: '그림자 크기를 바꿔보자!', level: '관찰!', mark: '🔦', accent: 'var(--light)', pale: 'var(--light-pale)' },
+  { id: 'air', title: '공기 연구소', prompt: '빈 컵 속에는 무엇이 있을까?', level: '도전!', mark: '🫧', accent: 'var(--air)', pale: 'var(--air-pale)' },
+  { id: 'heat', title: '온도 연구소', prompt: '얼음은 어디서 빨리 녹을까?', level: '관찰!', mark: '🧊', accent: 'var(--heat)', pale: 'var(--heat-pale)' },
+  { id: 'plant', title: '식물 연구소', prompt: '색깔 물은 어디로 갈까?', level: '관찰!', mark: '🌱', accent: 'var(--plant)', pale: 'var(--plant-pale)' },
+  { id: 'earth', title: '땅 연구소', prompt: '비가 오면 흙은 어떻게 될까?', level: '도전!', mark: '⛰️', accent: 'var(--earth)', pale: 'var(--earth-pale)' },
 ] as const;
 
 export default function Home() {
@@ -28,12 +35,12 @@ export default function Home() {
     }, { signal: lifecycle.signal })).catch(() => undefined);
     void Promise.resolve(context.registerTool({
       name: 'start_science_experiment', title: '과학 실험 시작하기',
-      description: '힘, 물질, 소리 중 하나의 실험 화면을 엽니다.',
-      inputSchema: { type: 'object', properties: { experiment: { type: 'string', enum: ['force', 'matter', 'sound'] } }, required: ['experiment'], additionalProperties: false },
+      description: '콩콩 과학실험실의 아홉 가지 실험 중 하나를 엽니다.',
+      inputSchema: { type: 'object', properties: { experiment: { type: 'string', enum: experimentIds } }, required: ['experiment'], additionalProperties: false },
       annotations: { readOnlyHint: false, untrustedContentHint: false },
       execute: (input: unknown) => {
         const experiment = (input as { experiment?: string }).experiment;
-        if (!['force', 'matter', 'sound'].includes(experiment || '')) throw new Error('지원하지 않는 실험입니다.');
+        if (!experimentIds.includes(experiment as (typeof experimentIds)[number])) throw new Error('지원하지 않는 실험입니다.');
         location.href = `/experiment/${experiment}`;
         return { opened: experiment };
       },
@@ -51,8 +58,8 @@ export default function Home() {
           <span className="brand-icon"><FlaskConical size={25} strokeWidth={2.5} /></span>
           <span>콩콩 과학실험실</span>
         </a>
-        <div className="star-meter" aria-label={`별 ${completed.length}개 중 3개`}>
-          <Star size={21} fill="currentColor" /><span>나의 별</span><strong>{completed.length} / 3</strong>
+        <div className="star-meter" aria-label={`별 ${completed.length}개 중 ${experiments.length}개`}>
+          <Star size={21} fill="currentColor" /><span>나의 별</span><strong>{completed.length} / {experiments.length}</strong>
         </div>
       </header>
 
@@ -68,7 +75,7 @@ export default function Home() {
       {allComplete && (
         <section className="completion-banner" aria-live="polite">
           <div className="completion-medal">🏅</div>
-          <div><span>오늘의 꼬마 과학자!</span><strong>3개의 실험을 모두 완료했어요!</strong></div>
+          <div><span>오늘의 꼬마 과학자!</span><strong>9개의 실험을 모두 완료했어요!</strong></div>
           <a href="/discoveries">내가 발견한 것 <ArrowRight size={20} /></a>
         </section>
       )}
