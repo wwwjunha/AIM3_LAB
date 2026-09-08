@@ -1,4 +1,4 @@
-export const experimentIds = ['force', 'matter', 'sound', 'magnet', 'light', 'air', 'heat', 'plant', 'earth'] as const;
+export const experimentIds = ['force', 'matter', 'sound', 'magnet', 'light', 'air', 'heat', 'plant', 'earth', 'float', 'dissolve', 'circuit', 'seed', 'friction', 'absorb', 'color', 'surface', 'reaction'] as const;
 
 export type ExperimentId = (typeof experimentIds)[number];
 

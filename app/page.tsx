@@ -15,6 +15,15 @@ const experiments = [
   { id: 'heat', title: '온도 연구소', prompt: '얼음은 어디서 빨리 녹을까?', level: '관찰!', mark: '🧊', accent: 'var(--heat)', pale: 'var(--heat-pale)' },
   { id: 'plant', title: '식물 연구소', prompt: '색깔 물은 어디로 갈까?', level: '관찰!', mark: '🌱', accent: 'var(--plant)', pale: 'var(--plant-pale)' },
   { id: 'earth', title: '땅 연구소', prompt: '비가 오면 흙은 어떻게 될까?', level: '도전!', mark: '⛰️', accent: 'var(--earth)', pale: 'var(--earth-pale)' },
+  { id: 'float', title: '뜨고 가라앉기 연구소', prompt: '어떤 물체가 물에 뜰까?', level: '관찰!', mark: '🛟', accent: 'var(--float)', pale: 'var(--float-pale)' },
+  { id: 'dissolve', title: '용해 연구소', prompt: '물에 녹는 물질을 찾아보자!', level: '도전!', mark: '🥄', accent: 'var(--dissolve)', pale: 'var(--dissolve-pale)' },
+  { id: 'circuit', title: '전기 회로 연구소', prompt: '전구에 불을 켜보자!', level: '도전!', mark: '💡', accent: 'var(--circuit)', pale: 'var(--circuit-pale)' },
+  { id: 'seed', title: '씨앗 연구소', prompt: '씨앗은 언제 싹이 날까?', level: '관찰!', mark: '🌰', accent: 'var(--seed)', pale: 'var(--seed-pale)' },
+  { id: 'friction', title: '마찰 연구소', prompt: '자동차는 어디서 멀리 갈까?', level: '도전!', mark: '🛝', accent: 'var(--friction)', pale: 'var(--friction-pale)' },
+  { id: 'absorb', title: '흡수 연구소', prompt: '물을 잘 흡수하는 재료는?', level: '쉬워요', mark: '🧽', accent: 'var(--absorb)', pale: 'var(--absorb-pale)' },
+  { id: 'color', title: '색 혼합 연구소', prompt: '두 색을 섞어 새 색을 만들자!', level: '쉬워요', mark: '🎨', accent: 'var(--color)', pale: 'var(--color-pale)' },
+  { id: 'surface', title: '표면 장력 연구소', prompt: '비누가 후추를 움직일까?', level: '도전!', mark: '🫧', accent: 'var(--surface)', pale: 'var(--surface-pale)' },
+  { id: 'reaction', title: '반응 연구소', prompt: '거품으로 풍선을 부풀려보자!', level: '도전!', mark: '🎈', accent: 'var(--reaction)', pale: 'var(--reaction-pale)' },
 ] as const;
 
 export default function Home() {
@@ -35,7 +44,7 @@ export default function Home() {
     }, { signal: lifecycle.signal })).catch(() => undefined);
     void Promise.resolve(context.registerTool({
       name: 'start_science_experiment', title: '과학 실험 시작하기',
-      description: '콩콩 과학실험실의 아홉 가지 실험 중 하나를 엽니다.',
+      description: '콩콩 과학실험실의 열여덟 가지 실험 중 하나를 엽니다.',
       inputSchema: { type: 'object', properties: { experiment: { type: 'string', enum: experimentIds } }, required: ['experiment'], additionalProperties: false },
       annotations: { readOnlyHint: false, untrustedContentHint: false },
       execute: (input: unknown) => {
@@ -75,7 +84,7 @@ export default function Home() {
       {allComplete && (
         <section className="completion-banner" aria-live="polite">
           <div className="completion-medal">🏅</div>
-          <div><span>오늘의 꼬마 과학자!</span><strong>9개의 실험을 모두 완료했어요!</strong></div>
+          <div><span>오늘의 꼬마 과학자!</span><strong>{experiments.length}개의 실험을 모두 완료했어요!</strong></div>
           <a href="/discoveries">내가 발견한 것 <ArrowRight size={20} /></a>
         </section>
       )}
@@ -90,7 +99,7 @@ export default function Home() {
             const isComplete = completed.includes(experiment.id);
             return (
               <article className="lab-card" key={experiment.id} style={{ '--lab-accent': experiment.accent, '--lab-pale': experiment.pale } as React.CSSProperties}>
-                <div className="card-topline"><span>0{index + 1}</span>{isComplete && <span className="complete-tag"><Check size={16} /> 완료</span>}</div>
+                <div className="card-topline"><span>{String(index + 1).padStart(2, '0')}</span>{isComplete && <span className="complete-tag"><Check size={16} /> 완료</span>}</div>
                 <div className="experiment-mark" aria-hidden="true">{experiment.mark}</div>
                 <h3>{experiment.title}</h3>
                 <p>{experiment.prompt}</p>
