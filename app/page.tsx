@@ -1,6 +1,6 @@
 'use client';
 
-import { ArrowRight, Check, FlaskConical, RotateCcw, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, Check, FlaskConical, Glasses, RotateCcw, Sparkles, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { getProgress } from '@/lib/progress';
 import { experimentIds } from '@/types/experiment';
@@ -105,9 +105,12 @@ export default function Home() {
                 <p>{experiment.prompt}</p>
                 <div className="card-footer">
                   <span className="level"><Star size={17} fill="currentColor" /> {experiment.level}</span>
-                  <a className="start-button" href={`/experiment/${experiment.id}`}>
-                    {isComplete ? <RotateCcw size={20} /> : <FlaskConical size={20} />}{isComplete ? '다시 하기' : '실험 시작'}
-                  </a>
+                  <div className="card-actions">
+                    {experiment.id === 'float' && <a className="vr-card-button" href="/vr/float" aria-label="뜨고 가라앉기 3D VR 시제품" title="3D·VR 시제품"><Glasses size={21} /><span>VR</span></a>}
+                    <a className="start-button" href={`/experiment/${experiment.id}`}>
+                      {isComplete ? <RotateCcw size={20} /> : <FlaskConical size={20} />}{isComplete ? '다시 하기' : '실험 시작'}
+                    </a>
+                  </div>
                 </div>
               </article>
             );
