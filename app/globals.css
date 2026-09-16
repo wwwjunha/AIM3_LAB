@@ -153,6 +153,67 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .vr-complete-actions > *:nth-child(2) { background: #168b70; }.vr-complete-actions button { width: 50px; padding: 0; background: #ffc83d; color: #17324d; }
 .vr-lab-page button:focus-visible, .vr-lab-page a:focus-visible { outline: 4px solid #ffc83d; outline-offset: 3px; }
 
+/* Electric circuit WebXR prototype */
+.circuit-vr { background: #e5f2e8; }
+.circuit-vr .vr-lab-header { border-bottom-color: #c8a332; }
+.circuit-vr .vr-lab-header > div:nth-child(2), .circuit-vr .vr-kicker, .circuit-vr .vr-observation-panel > span, .circuit-vr .vr-complete-panel > span { color: #8a5d00; }
+.circuit-vr .vr-primary { background: #a66d00; }
+.circuit-vr .vr-prediction-options button.selected { color: #795100; background: #fff5c7; border-color: #c59312; box-shadow: inset 5px 0 #c59312; }
+.circuit-vr .vr-loading { color: #765000; background: #fff7d8; }
+.circuit-vr .vr-discovery-panel { border-color: #9a6500; box-shadow: 8px 8px 0 #9a6500; }
+.circuit-vr .vr-result-pairs span { background: #fff7d8; border-color: #d7bb62; }
+.circuit-vr .vr-result-pairs strong { color: #715000; }
+.circuit-dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.circuit-dock button:nth-child(1) { color: #8c251f; background: #ffd9d5; }
+.circuit-dock button:nth-child(2) { color: #14567e; background: #d9eeff; }
+.circuit-dock button:nth-child(3) { color: #684900; background: #fff0ad; }
+.circuit-dock button:disabled { color: #6c7779; background: #e3e8e6; border-color: #c7cecb; cursor: not-allowed; opacity: .82; }
+.circuit-dock button.tested { color: white; background: #2f805d; border-color: #9de1bd; }
+
+/* Magnetic explorer WebXR prototype */
+.magnet-vr { background: #e7f2ef; }
+.magnet-vr .vr-lab-header { border-bottom-color: #d66b65; }
+.magnet-vr .vr-lab-header > div:nth-child(2), .magnet-vr .vr-kicker, .magnet-vr .vr-observation-panel > span, .magnet-vr .vr-complete-panel > span { color: #b83732; }
+.magnet-vr .vr-primary { background: #c5423c; }
+.magnet-vr .vr-prediction-options button.selected { color: #a72f2b; background: #fff0ef; border-color: #d84b45; box-shadow: inset 5px 0 #d84b45; }
+.magnet-vr .vr-loading { color: #a72f2b; background: #fff0ef; }
+.magnet-vr .vr-canvas-mount canvas { cursor: grab; }
+.magnet-vr .vr-discovery-panel { border-color: #c5423c; box-shadow: 8px 8px 0 #c5423c; }
+.magnet-vr .vr-result-pairs span { background: #e7f8ef; border-color: #83bea9; }
+.magnet-vr .vr-result-pairs strong { color: #a72f2b; }
+.magnet-dock button:nth-child(1), .magnet-dock button:nth-child(2) { color: #394d59; background: #e5edf1; }
+.magnet-dock button:nth-child(3) { color: #684728; background: #f2ddc5; }
+.magnet-dock button:nth-child(4) { color: #305b76; background: #dceefa; }
+.magnet-dock button.tested { color: white; background: #2d8068; border-color: #9de3cb; }
+
+.explorer-vr .vr-canvas-mount canvas { cursor: grab; }
+.explorer-dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.explorer-dock button:nth-child(1) { color: #804b00; background: #fff0b8; }
+.explorer-dock button:nth-child(2) { color: #22665a; background: #d9f0e9; }
+.explorer-dock button:nth-child(3) { color: #334f66; background: #dcebf5; }
+.explorer-dock button.tested { color: white; background: #287b67; border-color: #9ee4ce; }
+.light-vr { background: #d8edf3; }
+.light-vr .vr-lab-header { border-bottom-color: #e7b13b; }
+.light-vr .vr-lab-header > div:nth-child(2), .light-vr .vr-kicker, .light-vr .vr-observation-panel > span, .light-vr .vr-complete-panel > span { color: #9a6200; }
+.light-vr .vr-primary { background: #b87500; }
+.light-vr .vr-prediction-options button.selected { color: #855700; background: #fff6cc; border-color: #d79a18; box-shadow: inset 5px 0 #d79a18; }
+.light-vr .vr-loading { color: #8a5900; background: #fff7d8; }
+.light-vr .vr-discovery-panel { border-color: #b87500; box-shadow: 8px 8px 0 #b87500; }
+.sound-vr { background: #e4edf2; }
+.sound-vr .vr-lab-header { border-bottom-color: #d55273; }
+.sound-vr .vr-lab-header > div:nth-child(2), .sound-vr .vr-kicker, .sound-vr .vr-observation-panel > span, .sound-vr .vr-complete-panel > span { color: #b43a5c; }
+.sound-vr .vr-primary { background: #b83f61; }
+.sound-vr .vr-prediction-options button.selected { color: #9f2f50; background: #ffe7ef; border-color: #d55273; box-shadow: inset 5px 0 #d55273; }
+.sound-vr .vr-loading { color: #a33253; background: #ffedf3; }
+.sound-vr .vr-discovery-panel { border-color: #b83f61; box-shadow: 8px 8px 0 #b83f61; }
+.friction-vr { background: #d9ece7; }
+.friction-vr .vr-lab-header { border-bottom-color: #24836c; }
+.friction-vr .vr-lab-header > div:nth-child(2), .friction-vr .vr-kicker, .friction-vr .vr-observation-panel > span, .friction-vr .vr-complete-panel > span { color: #176c58; }
+.friction-vr .vr-primary { background: #207763; }
+.friction-vr .vr-prediction-options button.selected { color: #17614f; background: #e2f7f0; border-color: #24836c; box-shadow: inset 5px 0 #24836c; }
+.friction-vr .vr-loading { color: #176451; background: #e9f8f3; }
+.friction-vr .vr-discovery-panel { border-color: #207763; box-shadow: 8px 8px 0 #207763; }
+
 @media (max-width: 700px) {
   .vr-lab-page { min-height: 540px; }
   .vr-lab-header { height: 62px; grid-template-columns: auto 1fr auto; }
@@ -168,6 +229,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .vr-primary { min-height: 48px; margin-top: 10px; }
   .vr-observation-panel { top: 58px; left: 12px; width: min(270px, calc(100% - 24px)); padding: 13px; }.vr-observation-panel > strong { font-size: 1.05rem; }.vr-observation-panel p { font-size: .78rem; }
   .vr-object-dock { bottom: 10px; width: calc(100% - 20px); grid-template-columns: repeat(2, 1fr); }.vr-object-dock button { min-height: 42px; font-size: .76rem; }
+  .circuit-dock { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .vr-result-pairs { grid-template-columns: 1fr; }.vr-discovery-panel p { font-size: .84rem; }
   .vr-complete-actions { flex-wrap: wrap; }.vr-complete-actions > a { flex: 1 1 145px; }
 }
