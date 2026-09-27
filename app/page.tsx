@@ -112,6 +112,7 @@ export default function Home() {
                     {experiment.id === 'light' && <a className="vr-card-button" href="/vr/light" aria-label="빛과 그림자 탐사대 3D VR 시제품" title="3D·VR 시제품"><Glasses size={21} /><span>VR</span></a>}
                     {experiment.id === 'sound' && <a className="vr-card-button" href="/vr/sound" aria-label="소리 진동 연주실 3D VR 시제품" title="3D·VR 시제품"><Glasses size={21} /><span>VR</span></a>}
                     {experiment.id === 'friction' && <a className="vr-card-button" href="/vr/friction" aria-label="마찰 자동차 경주장 3D VR 시제품" title="3D·VR 시제품"><Glasses size={21} /><span>VR</span></a>}
+                    {['air', 'heat', 'dissolve', 'absorb', 'surface', 'reaction', 'seed', 'plant', 'color', 'force', 'matter', 'earth'].includes(experiment.id) && <a className="vr-card-button" href={`/vr/${experiment.id}`} aria-label={`${experiment.title} VR 실험`} title="VR 실험"><Glasses size={21} /><span>VR</span></a>}
                     <a className="start-button" href={`/experiment/${experiment.id}`}>
                       {isComplete ? <RotateCcw size={20} /> : <FlaskConical size={20} />}{isComplete ? '다시 하기' : '실험 시작'}
                     </a>

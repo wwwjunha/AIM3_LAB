@@ -1,0 +1,40 @@
+Tool: built-in image_gen (imagegen)
+Use: 모두의 창업 Q2 아이디어를 떠올린 배경 첨부 이미지
+Date: 2026-09-16
+
+Use case: infographic-diagram.
+Create ONE polished Korean-language infographic image for the "idea origin/background" section of a startup application for an elementary science virtual laboratory. This is an illustrated concept diagram, not a product screenshot, not a photo of a real pilot, and not an advertising poster. Landscape 16:9, high resolution, preferably 2048×1152.
+
+Design: white background; deep navy Korean sans-serif typography; restrained blue and mint accents; three generously spaced equal cards arranged left to right with two clear connecting arrows in the gaps. Flat vector-style editorial illustrations, crisp contours, consistent line weight, very light card backgrounds, ample margins. Professional, approachable, suitable for an adult evaluator. All text must be large and readable when the image is displayed at about 850 pixels wide. Avoid decorative noise.
+
+Top: very large bold exact title:
+"아이들이 안심하고 다시 실험할 수 있다면?"
+Small subtitle underneath:
+"AI 과학실험실을 떠올린 배경"
+
+Card 1, light blue:
+Exact header: "01  문제 인식"
+Illustration: a caring teacher supervising three elementary school children with protective goggles at a science table with simple beakers. Calm, respectful depiction of supervising several children. No accident, injury, fire, chaos, or distressed people.
+Exact two text lines below illustration:
+"실험 도구의 안전 관리 부담"
+"여러 학생을 지도하는 교사의 부담"
+
+Card 2, very light mint:
+Exact header: "02  필요한 환경"
+Illustration: a clear shield with check mark alongside a circular repeat arrow and a small science flask. Convey safety and repeated exploration. No extra words inside the icons.
+Exact two text lines below illustration:
+"안심하고 시도하는 환경"
+"여러 번 반복하는 탐구"
+
+Card 3, light blue-mint:
+Exact header: "03  아이디어"
+Illustration: a tablet with a simple conceptual virtual science scene, a horseshoe magnet and a few metal paperclips, and a finger touching the screen. Use symbolic interface shapes with NO additional text. This should obviously be an illustration, not a screenshot or a claim of a completed AI feature.
+Exact two text lines below illustration:
+"직접 조작하는 가상실험실"
+"예상과 결과를 비교하는 학습"
+
+Below all three cards, a wide subtle mint rounded banner with this exact centered two-line conclusion:
+"실험 전에는 미리 탐색하고,"
+"수업 후에는 반복해서 확인하는 과학 학습 환경"
+
+Constraints: Render the supplied Korean text verbatim, clearly and with correct Hangul. Do not add more text or invent statistics, endorsements, results, partnerships or claims of AI implementation. No logos, watermark, news clippings, visible English labels, dense paragraphs, robot characters, 3D glossy rendering or stock-photo aesthetics. Keep illustrations secondary to the text hierarchy. Ensure nothing is cropped and all card baselines align.

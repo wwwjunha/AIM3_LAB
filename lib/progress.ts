@@ -22,14 +22,14 @@ export function getProgress(): ProgressSnapshot {
 export function startExperiment(id: ExperimentId) {
   const current = getProgress().records[id];
   const next: ExperimentRecord = current.startedAt
-    ? { ...current, retryCount: current.retryCount + 1 }
+    ? { ...current, startedAt: new Date().toISOString(), retryCount: current.retryCount + 1 }
     : { ...current, startedAt: new Date().toISOString() };
   localStorage.setItem(`${id}Record`, JSON.stringify(next));
 }
 
 export function completeExperiment(id: ExperimentId, report: ExperimentReportInput) {
   const current = getProgress().records[id];
-  const completedAt = current.completedAt || new Date().toISOString();
+  const completedAt = new Date().toISOString();
   localStorage.setItem(`${id}Completed`, 'true');
   localStorage.setItem(`${id}Record`, JSON.stringify({
     ...current,

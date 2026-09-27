@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { completeExperiment, getProgress, startExperiment } from '@/lib/progress';
+import { playVrSound } from '@/lib/vrAudio';
+import VrSoundButton from './VrSoundButton';
 
 type TrialId = 'cork' | 'coin' | 'cap' | 'stone';
 type Phase = 'predict' | 'experiment' | 'discover' | 'complete';
@@ -301,6 +303,7 @@ export default function FloatVRLab() {
     function triggerTrial(id: TrialId) {
       if (phaseRef.current !== 'experiment') return;
       if (!testedInScene.has(id)) {
+        playVrSound('water');
         const group = objectGroups.get(id);
         if (group) motions.set(id, { startedAt: performance.now(), from: group.position.clone() });
         testedInScene.add(id);
@@ -463,6 +466,7 @@ export default function FloatVRLab() {
         {!sceneReady && <div className="vr-loading"><FlaskConical size={34} /><strong>3D 실험실 준비 중</strong></div>}
 
         <div className="vr-top-tools">
+          <VrSoundButton />
           <div className="vr-mode-status"><span className={vrActive ? 'live' : ''} />{vrActive ? 'VR 실험 중' : '화면 3D 모드'}</div>
           {vrSupport === 'supported' && phase === 'experiment'
             ? <button className="vr-enter-button" onClick={() => void enterVrRef.current()}><Glasses size={22} /> VR 입장</button>
@@ -476,7 +480,7 @@ export default function FloatVRLab() {
             <div className="vr-prediction-options">
               {predictions.map((choice) => <button className={prediction === choice ? 'selected' : ''} key={choice} onClick={() => setPrediction(choice)}>{prediction === choice && <Check size={18} />}{choice}</button>)}
             </div>
-            <button className="vr-primary" disabled={!prediction} onClick={beginExperiment}>실험 시작 <MousePointer2 size={19} /></button>
+            <button className="vr-primary" disabled={!prediction} onClick={() => { playVrSound('start'); beginExperiment(); }}>실험 시작 <MousePointer2 size={19} /></button>
           </div>
         )}
 
@@ -500,7 +504,7 @@ export default function FloatVRLab() {
             <h1>크기만으로 정해지지 않아!</h1>
             <div className="vr-result-pairs"><span>코르크·병뚜껑 <strong>떠요 ↑</strong></span><span>동전·돌멩이 <strong>가라앉아요 ↓</strong></span></div>
             <p>물체가 물에 뜨거나 가라앉는 것은 재료와 무게, 모양에 따라 달라질 수 있어요.</p>
-            <button className="vr-primary" onClick={() => setPhase('complete')}><Star size={19} fill="currentColor" /> 별 받기</button>
+            <button className="vr-primary" onClick={() => { playVrSound('success'); setPhase('complete'); }}><Star size={19} fill="currentColor" /> 별 받기</button>
           </div>
         )}
 

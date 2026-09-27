@@ -5,6 +5,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { completeExperiment, getProgress, startExperiment } from '@/lib/progress';
+import { playVrSound } from '@/lib/vrAudio';
+import VrSoundButton from './VrSoundButton';
 
 type StepId = 'positive' | 'negative' | 'switch';
 type Phase = 'predict' | 'experiment' | 'discover' | 'complete';
@@ -341,6 +343,7 @@ export default function CircuitVRLab() {
       if (phaseRef.current !== 'experiment') return;
       if (id === 'switch' && (!completedInScene.has('positive') || !completedInScene.has('negative'))) return;
       if (!completedInScene.has(id)) {
+        playVrSound(id === 'switch' ? 'circuit' : 'place');
         const group = stepGroups.get(id);
         if (group) motions.set(id, { startedAt: performance.now(), from: group.position.clone() });
         completedInScene.add(id);
@@ -504,6 +507,7 @@ export default function CircuitVRLab() {
         {!sceneReady && <div className="vr-loading"><FlaskConical size={34} /><strong>3D 회로 준비 중</strong></div>}
 
         <div className="vr-top-tools">
+          <VrSoundButton />
           <div className="vr-mode-status"><span className={vrActive ? 'live' : ''} />{vrActive ? 'VR 실험 중' : '화면 3D 모드'}</div>
           {vrSupport === 'supported' && phase === 'experiment'
             ? <button className="vr-enter-button" onClick={() => void enterVrRef.current()}><Glasses size={22} /> VR 입장</button>
@@ -517,7 +521,7 @@ export default function CircuitVRLab() {
             <div className="vr-prediction-options">
               {predictions.map((choice) => <button className={prediction === choice ? 'selected' : ''} key={choice} onClick={() => setPrediction(choice)}>{prediction === choice && <Check size={18} />}{choice}</button>)}
             </div>
-            <button className="vr-primary" disabled={!prediction} onClick={beginExperiment}>회로 만들기 <MousePointer2 size={19} /></button>
+            <button className="vr-primary" disabled={!prediction} onClick={() => { playVrSound('start'); beginExperiment(); }}>회로 만들기 <MousePointer2 size={19} /></button>
           </div>
         )}
 
@@ -544,7 +548,7 @@ export default function CircuitVRLab() {
             <h1>전기가 다니는 길은 이어져야 해!</h1>
             <div className="vr-result-pairs"><span>전선이 끊겨 있으면 <strong>불이 안 켜져요</strong></span><span>스위치를 닫으면 <strong>불이 켜져요</strong></span></div>
             <p>전지에서 나온 전기가 전선과 전구를 지나 다시 전지로 돌아오는 닫힌 길이 필요해요.</p>
-            <button className="vr-primary" onClick={() => setPhase('complete')}><Star size={19} fill="currentColor" /> 별 받기</button>
+            <button className="vr-primary" onClick={() => { playVrSound('success'); setPhase('complete'); }}><Star size={19} fill="currentColor" /> 별 받기</button>
           </div>
         )}
 

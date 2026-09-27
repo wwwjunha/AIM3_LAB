@@ -4,14 +4,19 @@ import { ArrowLeft, Check, FileText, Glasses, Home, Magnet, MousePointer2, Rotat
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { completeExperiment, getProgress, startExperiment } from '@/lib/progress';
+import { playVrSound } from '@/lib/vrAudio';
+import { createMagnetObject } from './magnetObjects';
+import VrSoundButton from './VrSoundButton';
 
 type TrialId = 'clip' | 'screw' | 'wood' | 'spoon';
 type Phase = 'predict' | 'experiment' | 'discover' | 'complete';
 
 const trials: Array<{ id: TrialId; name: string; shortName: string; sticks: boolean; result: string }> = [
   { id: 'clip', name: '철 클립', shortName: '철 클립', sticks: true, result: '찰칵! 자석으로 빠르게 끌려왔어요.' },
-  { id: 'screw', name: '철 나사', shortName: '철 나사', sticks: true, result: '철 나사도 자석에 딱 붙었어요.' },
+  { id: 'screw', name: '철 못', shortName: '철 못', sticks: true, result: '철 못도 자석에 딱 붙었어요.' },
   { id: 'wood', name: '나무 블록', shortName: '나무', sticks: false, result: '나무 블록은 자석에 붙지 않았어요.' },
   { id: 'spoon', name: '플라스틱 숟가락', shortName: '플라스틱', sticks: false, result: '플라스틱 숟가락도 그대로 있었어요.' },
 ];
@@ -38,7 +43,7 @@ function createLabel(text: string, border = '#d84b45') {
   context.fillText(text, 256, 65);
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true }));
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, transparent: true, toneMapped: false }));
   sprite.scale.set(1.25, 0.31, 1);
   return sprite;
 }
@@ -86,6 +91,7 @@ export default function MagnetVRLab() {
   const [tested, setTested] = useState<TrialId[]>([]);
   const [active, setActive] = useState<TrialId | null>(null);
   const [sceneReady, setSceneReady] = useState(false);
+  const [sceneError, setSceneError] = useState('');
   const [vrSupport, setVrSupport] = useState<'checking' | 'supported' | 'unsupported'>('checking');
   const [vrActive, setVrActive] = useState(false);
   const [stars, setStars] = useState(0);
@@ -111,7 +117,7 @@ export default function MagnetVRLab() {
       question: '어떤 물체가 자석에 붙을까?',
       prediction,
       observations: [
-        '철 클립과 철 나사는 자석 가까이에서 빠르게 끌려와 붙었어요.',
+        '철 클립과 철 못은 자석 가까이에서 빠르게 끌려와 붙었어요.',
         '나무 블록과 플라스틱 숟가락은 자석에 붙지 않았어요.',
         '겉모양보다 물체를 이루는 재료가 중요했어요.',
       ],
@@ -127,7 +133,7 @@ export default function MagnetVRLab() {
     const oldTexture = board.material.map;
     const allTested = tested.length === trials.length;
     const title = phase === 'predict' ? '자석은 무엇을 끌어당길까?' : allTested ? '탐사 완료!' : `${tested.length} / 4 물체 조사`;
-    const detail = phase === 'experiment' ? '물체를 잡아 자석 가까이에 놓아 봐' : '철 클립 · 철 나사 · 나무 · 플라스틱';
+    const detail = phase === 'experiment' ? '물체를 잡아 자석 가까이에 놓아 봐' : '철 클립 · 철 못 · 나무 · 플라스틱';
     board.material.map = createBoardTexture(title, detail, allTested);
     board.material.needsUpdate = true;
     oldTexture?.dispose();
@@ -137,16 +143,20 @@ export default function MagnetVRLab() {
     const mount = mountRef.current;
     if (!mount) return;
     const host = mount;
+    let disposed = false;
+    let modelLoaded = false;
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#dceee9');
     scene.fog = new THREE.Fog('#dceee9', 14, 29);
 
     const camera = new THREE.PerspectiveCamera(44, 1, 0.05, 40);
-    camera.position.set(0, 3.4, 5.8);
+    camera.position.set(0, 4.1, 7.4);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.xr.enabled = true;
@@ -156,8 +166,16 @@ export default function MagnetVRLab() {
     renderer.domElement.setAttribute('aria-label', '자석으로 네 가지 물체를 조사하는 3D 가상 실험 장면');
     mount.appendChild(renderer.domElement);
 
+    const environment = new RoomEnvironment();
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const environmentMap = pmrem.fromScene(environment, 0.04);
+    scene.environment = environmentMap.texture;
+    scene.environmentIntensity = 0.85;
+    environment.dispose();
+    pmrem.dispose();
+
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 1.35, -2);
+    controls.target.set(0, 1.8, -2);
     controls.enablePan = false;
     controls.minDistance = 5.2;
     controls.maxDistance = 19;
@@ -165,13 +183,18 @@ export default function MagnetVRLab() {
     controls.maxPolarAngle = 1.42;
     controls.update();
 
-    scene.add(new THREE.HemisphereLight('#ffffff', '#52786f', 2.2));
-    const keyLight = new THREE.DirectionalLight('#fff4dc', 3.6);
+    scene.add(new THREE.HemisphereLight('#ffffff', '#71837d', 1.15));
+    const keyLight = new THREE.DirectionalLight('#fff6e9', 2.6);
     keyLight.position.set(4, 8, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(1024, 1024);
+    keyLight.shadow.camera.left = -5; keyLight.shadow.camera.right = 5;
+    keyLight.shadow.camera.top = 6; keyLight.shadow.camera.bottom = -4;
+    keyLight.shadow.normalBias = 0.025;
+    keyLight.target.position.set(0, 1, -2);
+    scene.add(keyLight.target);
     scene.add(keyLight);
-    const accentLight = new THREE.PointLight('#75d9c1', 30, 10);
+    const accentLight = new THREE.PointLight('#d5eeff', 12, 10);
     accentLight.position.set(-4, 3, 1);
     scene.add(accentLight);
 
@@ -188,12 +211,12 @@ export default function MagnetVRLab() {
     wall.receiveShadow = true;
     scene.add(wall);
 
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 1.9), new THREE.MeshBasicMaterial({ map: createBoardTexture('자석은 무엇을 끌어당길까?', '철 클립 · 철 나사 · 나무 · 플라스틱', false) }));
-    board.position.set(0, 3.55, -5.26);
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 1.08), new THREE.MeshBasicMaterial({ map: createBoardTexture('자석은 무엇을 끌어당길까?', '철 클립 · 철 못 · 나무 · 플라스틱', false), toneMapped: false }));
+    board.position.set(0, 4.55, -5.26);
     scene.add(board);
     boardRef.current = board;
-    const frame = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(5.06, 2.16, 0.08)), new THREE.LineBasicMaterial({ color: '#243c48' }));
-    frame.position.set(0, 3.55, -5.22);
+    const frame = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(4.94, 1.2, 0.08)), new THREE.LineBasicMaterial({ color: '#243c48' }));
+    frame.position.set(0, 4.55, -5.22);
     scene.add(frame);
 
     for (const x of [-5.25, 5.25]) {
@@ -208,7 +231,7 @@ export default function MagnetVRLab() {
       }
     }
 
-    const tableTop = new THREE.Mesh(new THREE.BoxGeometry(8, 0.3, 4), material('#e5b45b', 0.68));
+    const tableTop = new THREE.Mesh(new THREE.BoxGeometry(8, 0.3, 4), material('#cba974', 0.68));
     tableTop.position.set(0, 0.65, -2.08);
     tableTop.castShadow = true;
     tableTop.receiveShadow = true;
@@ -230,24 +253,36 @@ export default function MagnetVRLab() {
     scene.add(platformEdge);
 
     const magnetGroup = new THREE.Group();
-    const arch = new THREE.Mesh(new THREE.TorusGeometry(0.78, 0.24, 18, 48, Math.PI), material('#d84b45', 0.42, 0.12));
-    arch.position.y = 0.72;
-    const leftLeg = new THREE.Mesh(new THREE.BoxGeometry(0.48, 1.12, 0.48), material('#d84b45', 0.42, 0.12));
-    leftLeg.position.set(-0.78, 0.12, 0);
-    const rightLeg = new THREE.Mesh(new THREE.BoxGeometry(0.48, 1.12, 0.48), material('#2869ae', 0.42, 0.12));
-    rightLeg.position.set(0.78, 0.12, 0);
-    const leftPole = new THREE.Mesh(new THREE.BoxGeometry(0.54, 0.25, 0.54), material('#c8d1d2', 0.24, 0.7));
-    leftPole.position.set(-0.78, -0.54, 0);
-    const rightPole = leftPole.clone();
-    rightPole.position.x = 0.78;
-    magnetGroup.add(arch, leftLeg, rightLeg, leftPole, rightPole);
-    magnetGroup.position.set(0, 2.05, -3.26);
-    magnetGroup.scale.setScalar(1.16);
-    magnetGroup.traverse((child) => { if (child instanceof THREE.Mesh) child.castShadow = true; });
+    magnetGroup.position.set(0, 1.5, -3.16);
     scene.add(magnetGroup);
-    const magnetLabel = createLabel('탐사 자석', '#c5423c');
-    magnetLabel.position.set(0, 3.75, -3.26);
-    scene.add(magnetLabel);
+
+    function disposeObject(root: THREE.Object3D) {
+      root.traverse((object) => {
+        if (object instanceof THREE.Mesh || object instanceof THREE.Line || object instanceof THREE.Sprite) {
+          object.geometry?.dispose();
+          for (const item of Array.isArray(object.material) ? object.material : [object.material]) {
+            if ('map' in item && item.map instanceof THREE.Texture) item.map.dispose();
+            item.dispose();
+          }
+        }
+      });
+    }
+    new GLTFLoader().load('/models/horseshoe-magnet.glb', (gltf) => {
+      if (disposed) { disposeObject(gltf.scene); return; }
+      gltf.scene.traverse((child) => { if (child instanceof THREE.Mesh) { child.castShadow = true; child.receiveShadow = true; } });
+      magnetGroup.add(gltf.scene);
+      modelLoaded = true;
+      renderer.domElement.dataset.magnetModel = 'horseshoe-glb';
+    }, undefined, () => {
+      if (!disposed) setSceneError('자석 모형을 불러오지 못했어요. 다시 시도해 주세요.');
+    });
+    const standMaterial = material('#77848b', 0.32, 0.8);
+    const standBase = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.48, 0.09, 40), standMaterial);
+    standBase.position.set(0, 1.055, -3.57); standBase.castShadow = true; scene.add(standBase);
+    const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 2.67, 20), standMaterial);
+    stand.position.set(0, 2.41, -3.57); stand.castShadow = true; scene.add(stand);
+    const clamp = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.09, 0.5), material('#384650', 0.58));
+    clamp.position.set(0, 3.7, -3.38); scene.add(clamp);
 
     const fieldRings = [0, 1, 2].map((index) => {
       const ring = new THREE.Mesh(
@@ -262,61 +297,26 @@ export default function MagnetVRLab() {
     const interactive: THREE.Object3D[] = [];
     const objectGroups = new Map<TrialId, THREE.Group>();
     const initialPositions: Record<TrialId, THREE.Vector3> = {
-      clip: new THREE.Vector3(-2.25, 1.22, -0.78),
-      screw: new THREE.Vector3(-0.75, 1.22, -0.78),
-      wood: new THREE.Vector3(0.75, 1.22, -0.78),
-      spoon: new THREE.Vector3(2.25, 1.22, -0.78),
+      clip: new THREE.Vector3(-2.25, 1.055, -1.18),
+      screw: new THREE.Vector3(-0.75, 1.16, -1.18),
+      wood: new THREE.Vector3(0.75, 1.28, -1.18),
+      spoon: new THREE.Vector3(2.25, 1.045, -1.18),
     };
     const targetPositions: Partial<Record<TrialId, THREE.Vector3>> = {
-      clip: new THREE.Vector3(-0.56, 1.67, -3.05),
-      screw: new THREE.Vector3(0.56, 1.67, -3.05),
+      clip: new THREE.Vector3(-0.64, 1.48, -3.02),
+      screw: new THREE.Vector3(0.64, 1.43, -3.02),
     };
 
     function addTrialObject(id: TrialId) {
       const group = new THREE.Group();
-      if (id === 'clip') {
-        const outer = new THREE.Mesh(new THREE.TorusGeometry(0.32, 0.055, 10, 32), material('#9ca9ad', 0.22, 0.82));
-        outer.scale.y = 1.55;
-        outer.rotation.x = Math.PI / 2;
-        const inner = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.045, 10, 28), material('#c4ced0', 0.18, 0.86));
-        inner.scale.y = 1.55;
-        inner.rotation.x = Math.PI / 2;
-        inner.position.x = 0.13;
-        group.add(outer, inner);
-      } else if (id === 'screw') {
-        const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.08, 0.82, 18), material('#8f9da0', 0.25, 0.78));
-        shaft.rotation.z = Math.PI / 2;
-        const head = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.18, 24), material('#bbc5c7', 0.22, 0.8));
-        head.rotation.z = Math.PI / 2;
-        head.position.x = -0.46;
-        const tip = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 18), material('#8f9da0', 0.25, 0.78));
-        tip.rotation.z = -Math.PI / 2;
-        tip.position.x = 0.5;
-        group.add(shaft, head, tip);
-      } else if (id === 'wood') {
-        const block = new THREE.Mesh(new THREE.BoxGeometry(0.82, 0.58, 0.7), material('#b9793f', 0.88));
-        const grain = new THREE.Mesh(new THREE.TorusGeometry(0.18, 0.026, 8, 24), material('#7f4c29', 0.86));
-        grain.position.set(0, 0, 0.36);
-        group.add(block, grain);
-      } else {
-        const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 18), material('#53a9d4', 0.48));
-        bowl.scale.set(1, 0.42, 0.72);
-        bowl.position.x = 0.36;
-        const handle = new THREE.Mesh(new THREE.CapsuleGeometry(0.09, 0.72, 6, 14), material('#53a9d4', 0.48));
-        handle.rotation.z = Math.PI / 2;
-        handle.position.x = -0.22;
-        group.add(bowl, handle);
-      }
-      group.traverse((child) => {
-        if (child instanceof THREE.Mesh) {
-          child.castShadow = true;
-          child.userData.trialId = id;
-          interactive.push(child);
-        }
-      });
+      group.add(createMagnetObject(id));
+      // Thin wire and nail shafts still need a usable touch/controller pick area.
+      const hitBox = new THREE.Mesh(new THREE.BoxGeometry(id === 'spoon' ? 1.52 : 1.3, 0.62, 0.76), new THREE.MeshBasicMaterial({ visible: false }));
+      hitBox.userData.trialId = id; group.add(hitBox); interactive.push(hitBox);
       const label = createLabel(trials.find((trial) => trial.id === id)?.shortName || '', trials.find((trial) => trial.id === id)?.sticks ? '#5c7178' : '#5a8a79');
-      label.position.y = 0.8;
-      group.add(label);
+      label.position.set(initialPositions[id].x, 0.65, 0.02);
+      group.userData.label = label;
+      scene.add(label);
       group.position.copy(initialPositions[id]);
       scene.add(group);
       objectGroups.set(id, group);
@@ -329,6 +329,9 @@ export default function MagnetVRLab() {
     const rejections = new Map<TrialId, { startedAt: number; from: THREE.Vector3 }>();
     const returns = new Map<TrialId, { startedAt: number; from: THREE.Vector3 }>();
     const testedInScene = new Set<TrialId>();
+    const heldObjects = new Set<TrialId>();
+    const dropZone = new THREE.Mesh(new THREE.BoxGeometry(2.5, 2.7, 0.9), new THREE.MeshBasicMaterial({ visible: false }));
+    dropZone.position.set(0, 2.3, -3.05); scene.add(dropZone);
     const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -1.22);
     let pointerDrag: { id: TrialId; pointerId: number; offset: THREE.Vector3 } | null = null;
 
@@ -342,6 +345,8 @@ export default function MagnetVRLab() {
       const group = objectGroups.get(id);
       const trial = trials.find((item) => item.id === id);
       if (!group || !trial) return;
+      playVrSound(trial.sticks ? 'magnet' : 'place');
+      (group.userData.label as THREE.Sprite).visible = !trial.sticks;
       returns.delete(id);
       if (trial.sticks) motions.set(id, { startedAt: performance.now(), from: group.position.clone() });
       else rejections.set(id, { startedAt: performance.now(), from: group.position.clone() });
@@ -350,7 +355,7 @@ export default function MagnetVRLab() {
 
     function triggerTrial(id: TrialId) {
       const group = objectGroups.get(id);
-      if (!group || phaseRef.current !== 'experiment') return;
+      if (!group || heldObjects.has(id) || phaseRef.current !== 'experiment') return;
       motions.delete(id);
       rejections.delete(id);
       reactToMagnet(id);
@@ -359,7 +364,7 @@ export default function MagnetVRLab() {
 
     function findTrialWithRay(ray: THREE.Ray) {
       raycaster.ray.copy(ray);
-      const hit = raycaster.intersectObjects(interactive, false)[0];
+      const hit = raycaster.intersectObjects(interactive, false).find((item) => !heldObjects.has(item.object.userData.trialId));
       return hit?.object.userData.trialId as TrialId | undefined;
     }
 
@@ -372,13 +377,14 @@ export default function MagnetVRLab() {
     function finishDrop(id: TrialId) {
       const group = objectGroups.get(id);
       if (!group) return;
-      const closeToMagnet = Math.hypot(group.position.x, group.position.z + 3.08) < 1.62;
+      group.quaternion.identity();
+      const closeToMagnet = Math.hypot(group.position.x, group.position.z + 3.08) < 1.62 && group.position.y > 0.7 && group.position.y < 4;
       if (closeToMagnet) reactToMagnet(id);
       else returns.set(id, { startedAt: performance.now(), from: group.position.clone() });
     }
 
     function onPointerDown(event: PointerEvent) {
-      if (phaseRef.current !== 'experiment') return;
+      if (phaseRef.current !== 'experiment' || pointerDrag || event.button !== 0) return;
       setPointerFromEvent(event);
       const id = findTrialWithRay(raycaster.ray);
       const group = id ? objectGroups.get(id) : undefined;
@@ -388,6 +394,8 @@ export default function MagnetVRLab() {
       motions.delete(id);
       rejections.delete(id);
       returns.delete(id);
+      heldObjects.add(id);
+      (group.userData.label as THREE.Sprite).visible = true;
       pointerDrag = { id, pointerId: event.pointerId, offset: group.position.clone().sub(planePoint) };
       controls.enabled = false;
       renderer.domElement.setPointerCapture(event.pointerId);
@@ -405,6 +413,7 @@ export default function MagnetVRLab() {
           group.position.copy(planePoint.add(pointerDrag.offset));
           group.position.x = THREE.MathUtils.clamp(group.position.x, -3, 3);
           group.position.z = THREE.MathUtils.clamp(group.position.z, -3.65, -0.55);
+          if (raycaster.intersectObject(dropZone, false).length) group.position.set(group.position.x * 0.3, 1.5, -2.9);
         }
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -417,10 +426,17 @@ export default function MagnetVRLab() {
       if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
       const id = pointerDrag.id;
       pointerDrag = null;
+      heldObjects.delete(id);
       controls.enabled = true;
       renderer.domElement.style.cursor = 'grab';
       if (renderer.domElement.hasPointerCapture(event.pointerId)) renderer.domElement.releasePointerCapture(event.pointerId);
-      finishDrop(id);
+      if (event.type === 'pointercancel' || event.type === 'lostpointercapture') {
+        const group = objectGroups.get(id)!;
+        returns.set(id, { startedAt: performance.now(), from: group.position.clone() });
+      } else {
+        setPointerFromEvent(event);
+        if (raycaster.intersectObject(dropZone, false).length) reactToMagnet(id); else finishDrop(id);
+      }
       event.preventDefault();
       event.stopImmediatePropagation();
     }
@@ -428,6 +444,7 @@ export default function MagnetVRLab() {
     renderer.domElement.addEventListener('pointermove', onPointerMove, true);
     renderer.domElement.addEventListener('pointerup', onPointerUp, true);
     renderer.domElement.addEventListener('pointercancel', onPointerUp, true);
+    renderer.domElement.addEventListener('lostpointercapture', onPointerUp, true);
 
     const controllers: THREE.Group[] = [];
     const controllerDrags = new Map<THREE.Group, TrialId>();
@@ -435,7 +452,7 @@ export default function MagnetVRLab() {
       const controller = renderer.xr.getController(index);
       controller.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, -3)]), new THREE.LineBasicMaterial({ color: index === 0 ? '#ffca3a' : '#68dfbd' })));
       controller.addEventListener('selectstart', () => {
-        if (phaseRef.current !== 'experiment') return;
+        if (phaseRef.current !== 'experiment' || controllerDrags.has(controller)) return;
         const matrix = new THREE.Matrix4().identity().extractRotation(controller.matrixWorld);
         const ray = new THREE.Ray();
         ray.origin.setFromMatrixPosition(controller.matrixWorld);
@@ -446,6 +463,7 @@ export default function MagnetVRLab() {
         motions.delete(id);
         rejections.delete(id);
         returns.delete(id);
+        heldObjects.add(id);
         controller.attach(group);
         controllerDrags.set(controller, id);
       });
@@ -455,7 +473,15 @@ export default function MagnetVRLab() {
         if (!id || !group) return;
         scene.attach(group);
         controllerDrags.delete(controller);
+        heldObjects.delete(id);
         finishDrop(id);
+      });
+      controller.addEventListener('disconnected', () => {
+        const id = controllerDrags.get(controller);
+        if (!id) return;
+        const group = objectGroups.get(id)!;
+        scene.attach(group); group.quaternion.identity(); group.position.copy(initialPositions[id]);
+        heldObjects.delete(id); controllerDrags.delete(controller);
       });
       scene.add(controller);
       controllers.push(controller);
@@ -464,7 +490,17 @@ export default function MagnetVRLab() {
     enterVrRef.current = async () => {
       if (!navigator.xr) return;
       const session = await navigator.xr.requestSession('immersive-vr', { optionalFeatures: ['local-floor', 'bounded-floor'] });
-      session.addEventListener('end', () => setVrActive(false), { once: true });
+      session.addEventListener('end', () => {
+        if (!disposed) {
+          controllerDrags.forEach((id) => {
+            const group = objectGroups.get(id)!;
+            scene.attach(group); group.quaternion.identity(); group.position.copy(initialPositions[id]);
+            heldObjects.delete(id);
+          });
+          setVrActive(false);
+        }
+        controllerDrags.clear();
+      }, { once: true });
       await renderer.xr.setSession(session);
       setVrActive(true);
     };
@@ -479,23 +515,28 @@ export default function MagnetVRLab() {
       const nextNarrow = width < 620;
       if (nextNarrow !== narrowView) {
         narrowView = nextNarrow;
-        camera.position.set(0, nextNarrow ? 4.25 : 3.4, nextNarrow ? 14.2 : 5.8);
-        controls.target.set(0, 1.35, -2);
+        camera.position.set(0, nextNarrow ? 4.7 : 4.1, nextNarrow ? 14.2 : 7.4);
+        controls.target.set(0, 1.8, -2);
         controls.update();
       }
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height, false);
     }
-    const resizeObserver = new ResizeObserver(resize);
+    let resizeFrame = 0;
+    const resizeObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => { if (!disposed) resize(); });
+    });
     resizeObserver.observe(mount);
     resize();
 
     const clock = new THREE.Clock();
     renderer.setAnimationLoop(() => {
       const elapsed = clock.getElapsedTime();
-      magnetGroup.position.y = 2.05 + Math.sin(elapsed * 1.7) * 0.035;
+      board.visible = frame.visible = !narrowView || renderer.xr.isPresenting;
       fieldRings.forEach((ring, index) => {
+        ring.visible = heldObjects.size > 0;
         const pulse = 1 + ((elapsed * 0.18 + index * 0.22) % 0.45);
         ring.scale.setScalar(pulse);
         (ring.material as THREE.MeshBasicMaterial).opacity = 0.32 - (pulse - 1) * 0.55;
@@ -508,7 +549,7 @@ export default function MagnetVRLab() {
         const eased = 1 - Math.pow(1 - progress, 3);
         group.position.lerpVectors(motion.from, target, eased);
         group.position.y += Math.sin(progress * Math.PI) * 0.22;
-        group.rotation.z += 0.045;
+        group.rotation.z = Math.sin(progress * Math.PI) * 0.18;
         if (progress >= 1) motions.delete(id);
       });
       rejections.forEach((motion, id) => {
@@ -538,31 +579,27 @@ export default function MagnetVRLab() {
       });
       controls.update();
       renderer.render(scene, camera);
-      if (renderer.domElement.dataset.sceneReady !== 'true') {
+      if (modelLoaded && renderer.domElement.dataset.sceneReady !== 'true') {
         renderer.domElement.dataset.sceneReady = 'true';
         setSceneReady(true);
       }
     });
 
     return () => {
+      disposed = true;
       renderer.setAnimationLoop(null);
+      void renderer.xr.getSession()?.end();
       resizeObserver.disconnect();
+      cancelAnimationFrame(resizeFrame);
       controls.dispose();
       renderer.domElement.removeEventListener('pointerdown', onPointerDown, true);
       renderer.domElement.removeEventListener('pointermove', onPointerMove, true);
       renderer.domElement.removeEventListener('pointerup', onPointerUp, true);
       renderer.domElement.removeEventListener('pointercancel', onPointerUp, true);
+      renderer.domElement.removeEventListener('lostpointercapture', onPointerUp, true);
+      disposeObject(scene);
       controllers.forEach((controller) => controller.clear());
-      scene.traverse((object) => {
-        if (object instanceof THREE.Mesh || object instanceof THREE.Line || object instanceof THREE.Sprite) {
-          object.geometry?.dispose();
-          const materials = Array.isArray(object.material) ? object.material : [object.material];
-          materials.forEach((item) => {
-            if ('map' in item && item.map) item.map.dispose();
-            item.dispose();
-          });
-        }
-      });
+      environmentMap.dispose();
       renderer.dispose();
       renderer.domElement.remove();
       boardRef.current = null;
@@ -583,9 +620,11 @@ export default function MagnetVRLab() {
 
       <section className="vr-viewport" aria-label="자석 탐사대 VR 실험실">
         <div className="vr-canvas-mount" ref={mountRef} />
-        {!sceneReady && <div className="vr-loading"><Magnet size={36} /><strong>자석 탐사 기지 준비 중</strong></div>}
+        {!sceneReady && !sceneError && <div className="vr-loading"><Magnet size={36} /><strong>자석 탐사 기지 준비 중</strong></div>}
+        {sceneError && <div className="wet-error" role="alert">{sceneError}<button onClick={() => location.reload()}>다시 시도</button></div>}
 
         <div className="vr-top-tools">
+          <VrSoundButton />
           <div className="vr-mode-status"><span className={vrActive ? 'live' : ''} />{vrActive ? 'VR 탐사 중' : '화면 3D 모드'}</div>
           {vrSupport === 'supported' && phase === 'experiment'
             ? <button className="vr-enter-button" onClick={() => void enterVrRef.current()}><Glasses size={22} /> VR 입장</button>
@@ -599,7 +638,7 @@ export default function MagnetVRLab() {
             <div className="vr-prediction-options">
               {predictions.map((choice) => <button className={prediction === choice ? 'selected' : ''} key={choice} onClick={() => setPrediction(choice)}>{prediction === choice && <Check size={18} />}{choice}</button>)}
             </div>
-            <button className="vr-primary" disabled={!prediction} onClick={() => prediction && setPhase('experiment')}>탐사 시작 <MousePointer2 size={19} /></button>
+            <button className="vr-primary" disabled={!prediction || !sceneReady} onClick={() => { if (prediction && sceneReady) { playVrSound('start'); setPhase('experiment'); } }}>탐사 시작 <MousePointer2 size={19} /></button>
           </div>
         )}
 
@@ -608,7 +647,7 @@ export default function MagnetVRLab() {
             <div className="vr-panel vr-observation-panel" aria-live="polite">
               <span>{tested.length} / 4 조사</span>
               <strong>{activeTrial ? activeTrial.name : '물체를 직접 집어 봐'}</strong>
-              <p>{activeTrial ? activeTrial.result : '물체를 누른 채 자석의 빛나는 원 안으로 끌고 와서 놓아 봐.'}</p>
+              <p>{activeTrial ? activeTrial.result : '물체를 누른 채 자석 가까이로 끌고 와서 놓아 봐.'}</p>
               {allTested && <button className="vr-primary compact" onClick={() => setPhase('discover')}>분류 결과 확인</button>}
             </div>
             <div className="vr-object-dock magnet-dock" aria-label="버튼으로 바로 탐사할 물체 선택">
@@ -621,9 +660,9 @@ export default function MagnetVRLab() {
           <div className="vr-panel vr-discovery-panel">
             <span className="vr-kicker"><Sparkles size={16} /> 탐사대의 발견</span>
             <h1>모양보다 재료가 중요해!</h1>
-            <div className="vr-result-pairs"><span>철 클립 · 철 나사 <strong>자석에 붙어요</strong></span><span>나무 · 플라스틱 <strong>붙지 않아요</strong></span></div>
+            <div className="vr-result-pairs"><span>철 클립 · 철 못 <strong>자석에 붙어요</strong></span><span>나무 · 플라스틱 <strong>붙지 않아요</strong></span></div>
             <p>자석은 모든 물체가 아니라 철로 된 물체를 끌어당길 수 있어요.</p>
-            <button className="vr-primary" onClick={() => setPhase('complete')}><Star size={19} fill="currentColor" /> 탐사 별 받기</button>
+            <button className="vr-primary" onClick={() => { playVrSound('success'); setPhase('complete'); }}><Star size={19} fill="currentColor" /> 탐사 별 받기</button>
           </div>
         )}
 

@@ -1,0 +1,72 @@
+Tool: built-in image_gen
+Use: 모두의 창업 Q3-2 수익 창출 계획 첨부 이미지
+Date: 2026-09-16
+
++Use case: infographic-diagram.
+Asset type: Korean startup application attachment for Q3-2 revenue plan.
+Create ONE polished Korean-language infographic showing the revenue model of an elementary-school virtual science laboratory. Landscape 16:9, high resolution, preferably 2048×1152.
+
+Visual style: clean white background; deep navy Korean sans-serif typography; restrained blue and mint palette matching a professional education startup; flat vector-style icons; rounded cards; crisp outlines; generous whitespace; clear left-to-right hierarchy. Designed for an adult startup evaluator. All Korean text must be large and readable at about 850px display width. No people are required. Keep icons simple and secondary to the text.
+
+Top exact title, large and bold:
+"AI 과학실험실 수익 창출 구조"
+Exact subtitle:
+"가정용 구독으로 유료 수요를 검증한 뒤, 기관용 라이선스로 확대합니다"
+
+Main horizontal five-step flow, each step in a separate equal card connected by clear right arrows:
+
+Card 1:
+Exact number and header: "01  무료 체험"
+Exact body lines:
+"일부 가상실험"
+"기본 활동 리포트"
+Icon: open tablet with small flask and a gift-ticket symbol, no text inside icon.
+
+Card 2:
+Exact number and header: "02  가정용 구독"
+Exact body lines:
+"월 구독"
+"연간 이용권"
+Icon: home and calendar/subscription symbol.
+
+Card 3:
+Exact number and header: "03  유료 수요 검증"
+Exact body lines:
+"유료 전환율"
+"구독 유지율"
+Icon: simple upward chart with checkmark; no invented numbers.
+
+Card 4:
+Exact number and header: "04  기관 시범 운영"
+Exact body lines:
+"학교·학원"
+"공공 교육기관"
+Icon: school building and classroom presentation board.
+
+Card 5:
+Exact number and header: "05  기관용 라이선스"
+Exact body lines:
+"학기 이용권"
+"연간 이용권"
+Icon: license document with school badge/checkmark; no logo.
+
+Bottom section: two wide comparison cards side by side, with a centered label above them:
+"두 가지 수익원"
+
+Left bottom card, blue tint:
+Exact header: "가정용 B2C"
+Exact body lines:
+"이용자  초등학생"
+"구매자  학부모"
+"유료 상품  전체 실험·신규 콘텐츠"
+Small outlined badge below, exact text:
+"AI 질문·힌트 기능은 개발 예정"
+
+Right bottom card, mint tint:
+Exact header: "기관용 B2B·B2G"
+Exact body lines:
+"이용자  학생·교사"
+"구매자  학교·학원·공공 교육기관"
+"유료 상품  학기·연간 기관 이용권"
+
+Constraints: Render every supplied Korean phrase verbatim with correct Hangul. Do not add any other words, prices, percentages, statistics, partnerships, revenue results, brand claims, or AI-implementation claims. The AI badge must clearly say development is planned. No logos, trademarks, watermarks, English-only labels, robot characters, stock-photo aesthetics, dense paragraphs, 3D glossy rendering, coins raining, cash piles, or exaggerated growth imagery. No cropping. Keep all five main cards aligned and all text readable.

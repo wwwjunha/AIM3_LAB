@@ -1,0 +1,66 @@
+Tool: built-in image_gen
+Use: 모두의 창업 Q4-1 사업화 계획 첨부 이미지
+Date: 2026-09-16
+
++Use case: infographic-diagram.
+Asset type: Korean startup application attachment for Q4-1 commercialization execution plan.
+Create ONE polished Korean-language five-stage roadmap infographic for an elementary-school virtual science laboratory. Landscape 16:9, high resolution, preferably 2048×1152.
+
+Visual style: clean solid white background; deep navy Korean sans-serif typography; professional blue and mint palette consistent with an education startup; flat vector-style icons; rounded cards; crisp outlines; generous whitespace; very clear hierarchy. Audience is adult startup evaluators. All Korean text must be large and readable at about 850px display width. Use blue for the currently implemented stage and mint for all future stages. No people are required.
+
+Top exact title:
+"AI 과학실험실 사업화 로드맵"
+Exact subtitle:
+"사용자 검증부터 AI 기능 개발, 유료 운영, 교육기관 확장까지"
+
+Under subtitle, a small two-item status legend:
+Blue badge exact text: "현재 구현"
+Mint badge exact text: "추진 계획"
+
+Main horizontal flow: five equal cards from left to right, connected by strong right arrows.
+
+Card 1, BLUE emphasis, clearly marked as current:
+Exact number/header: "01  현재 MVP"
+Exact body:
+"18개 가상실험"
+"기본 활동 리포트"
+Small exact badge: "현재 구현"
+Icon: tablet with flask and report document.
+
+Card 2, MINT:
+Exact number/header: "02  무료 체험·검증"
+Exact body:
+"학생·학부모·교사 의견"
+"조작 방식·콘텐츠 개선"
+Small exact footer: "완료율·사용 의견 확인"
+Icon: clipboard with three user silhouettes and checkmark.
+
+Card 3, MINT:
+Exact number/header: "03  AI 기능 개발"
+Exact body:
+"AI 실험 도우미"
+"AI 리포트 작성 보조"
+Small exact badge: "개발 예정"
+Icon: small sparkle around a chat bubble and report document. Do not use a robot.
+
+Card 4, MINT:
+Exact number/header: "04  가정용 유료 시범"
+Exact body:
+"계정·결제 기능 구축"
+"전체 실험·AI 기능 구독"
+Small exact footer: "유료 전환·구독 유지 확인"
+Icon: home, calendar and payment card, with no numbers or currency symbols.
+
+Card 5, MINT:
+Exact number/header: "05  교육기관 확대"
+Exact body:
+"학교·학원 시범 수업"
+"기관용 기능·라이선스"
+Small exact footer: "기관 수요·구매 의향 확인"
+Icon: school building, classroom board and license document.
+
+At the bottom, a wide pale mint rounded banner with exact centered two-line text:
+"각 단계의 이용 결과와 유료 수요를 확인하며"
+"다음 개발과 시장 확대를 결정합니다"
+
+Constraints: Render all supplied Korean text verbatim with correct Hangul. Do not add any other text, dates, schedules, percentages, prices, revenue results, partnerships, customer counts, endorsements, or claims that planned stages are complete. No logos, trademarks, watermarks, English labels, robot characters, cash piles, coins, stock-photo aesthetics, dense paragraphs, 3D glossy rendering, black background, transparency, or cropping. Use a fully opaque white background. Align all five cards and keep text readable.

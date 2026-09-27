@@ -4,8 +4,9 @@ import { ArrowLeft, Car, Check, FileText, Glasses, Home, Lightbulb, MousePointer
 import { useCallback, useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { playStringTone } from '@/lib/audio';
+import { playVrSound } from '@/lib/vrAudio';
 import { completeExperiment, getProgress, startExperiment } from '@/lib/progress';
+import VrSoundButton from './VrSoundButton';
 
 export type ExplorerKind = 'light' | 'sound' | 'friction';
 type Phase = 'predict' | 'experiment' | 'discover' | 'complete';
@@ -399,6 +400,7 @@ export default function ExplorerVRLab({ kind }: { kind: ExplorerKind }) {
     function triggerTrial(id: string) {
       if (phaseRef.current !== 'experiment' || !config.trials.some((trial) => trial.id === id)) return;
       if (kind === 'light') {
+        playVrSound('light');
         const positions: Record<string, number> = { near: -0.9, middle: -1.75, far: -2.6 };
         const scales: Record<string, number> = { near: 1.72, middle: 1.22, far: 0.78 };
         lampTargetX = positions[id];
@@ -407,9 +409,10 @@ export default function ExplorerVRLab({ kind }: { kind: ExplorerKind }) {
       if (kind === 'sound') {
         actionStarts.set(id, performance.now());
         const frequency: Record<string, number> = { short: 540, medium: 390, long: 260 };
-        void playStringTone(frequency[id]);
+        playVrSound('string', frequency[id]);
       }
       if (kind === 'friction') {
+        playVrSound('slide');
         const group = actionGroups.get(id);
         if (group) group.position.z = -1.2;
         actionStarts.set(id, performance.now());
@@ -596,6 +599,7 @@ export default function ExplorerVRLab({ kind }: { kind: ExplorerKind }) {
         <div className="vr-canvas-mount" ref={mountRef} />
         {!sceneReady && <div className="vr-loading">{titleIcon(kind)}<strong>실험실 준비 중</strong></div>}
         <div className="vr-top-tools">
+          <VrSoundButton />
           <div className="vr-mode-status"><span className={vrActive ? 'live' : ''} />{vrActive ? 'VR 실험 중' : '화면 3D 모드'}</div>
           {vrSupport === 'supported' && phase === 'experiment'
             ? <button className="vr-enter-button" onClick={() => void enterVrRef.current()}><Glasses size={22} /> VR 입장</button>
@@ -609,7 +613,7 @@ export default function ExplorerVRLab({ kind }: { kind: ExplorerKind }) {
             <div className="vr-prediction-options">
               {config.predictions.map((choice) => <button className={prediction === choice ? 'selected' : ''} key={choice} onClick={() => setPrediction(choice)}>{prediction === choice && <Check size={18} />}{choice}</button>)}
             </div>
-            <button className="vr-primary" disabled={!prediction} onClick={() => prediction && setPhase('experiment')}>실험 시작 <MousePointer2 size={19} /></button>
+            <button className="vr-primary" disabled={!prediction} onClick={() => { if (prediction) { playVrSound('start'); setPhase('experiment'); } }}>실험 시작 <MousePointer2 size={19} /></button>
           </div>
         )}
 
@@ -633,7 +637,7 @@ export default function ExplorerVRLab({ kind }: { kind: ExplorerKind }) {
             <h1>{config.discoveryTitle}</h1>
             <div className="vr-result-pairs">{config.pairs.map((pair) => <span key={pair.label}>{pair.label}<strong>{pair.result}</strong></span>)}</div>
             <p>{config.discovery}</p>
-            <button className="vr-primary" onClick={() => setPhase('complete')}><Star size={19} fill="currentColor" /> 실험 별 받기</button>
+            <button className="vr-primary" onClick={() => { playVrSound('success'); setPhase('complete'); }}><Star size={19} fill="currentColor" /> 실험 별 받기</button>
           </div>
         )}
 
