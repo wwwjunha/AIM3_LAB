@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Move, MousePointerClick } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -20,6 +21,7 @@ export default function MatterExperiment() {
   const [tested, setTested] = useState<Record<Material, Vessel[]>>({ water: [], rock: [] });
 
   function place(vessel: Vessel, material = selected) {
+    recordTrial('matter', `${material === 'water' ? '물' : '돌'} → ${vessels.find((item) => item.id === vessel)?.name}`, material === 'water' ? '그릇에 맞게 모양이 달라졌어요.' : '돌의 모양이 유지됐어요.');
     setContents((old) => ({ ...old, [vessel]: material }));
     setTested((old) => ({ ...old, [material]: old[material].includes(vessel) ? old[material] : [...old[material], vessel] }));
   }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, MoveHorizontal, Sun } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -17,6 +18,7 @@ export default function LightExperiment() {
   function observe(value: number) {
     setDistance(value);
     const zone = value < 40 ? 'near' : value > 60 ? 'far' : 'middle';
+    if (!tested.includes(zone)) recordTrial('light', `거리 조절값 ${value} (화면 모형)`, zone === 'near' ? '큰 그림자' : zone === 'far' ? '작은 그림자' : '중간 그림자');
     setTested((old) => old.includes(zone) ? old : [...old, zone]);
   }
 

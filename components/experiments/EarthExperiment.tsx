@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, CloudRain, Mountain } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -15,6 +16,7 @@ export default function EarthExperiment() {
   const [tested, setTested] = useState<Slope[]>([]);
 
   function rain(slope: Slope) {
+    recordTrial('earth', slope === 'gentle' ? '완만한 비탈' : '가파른 비탈', slope === 'gentle' ? '흙이 조금 움직였어요.' : '흙이 더 많이 움직였어요.');
     setTested((old) => old.includes(slope) ? old : [...old, slope]);
   }
 

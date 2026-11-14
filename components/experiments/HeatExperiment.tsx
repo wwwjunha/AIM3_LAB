@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Clock3, ThermometerSun } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -42,7 +43,7 @@ export default function HeatExperiment() {
         <div className="temperature-zone cool"><span>서늘한 곳 15°C</span><div className="ice-cube" style={{ transform: `scale(${1 - time * .1})` }}>🧊</div><div className="puddle" style={{ width: `${25 + time * 9}%` }} /><strong>{time === 3 ? '아직 얼음이 남았어!' : '천천히 작아져요'}</strong></div>
       </div>
       <div className="time-dots" aria-label={`관찰 시간 ${time}단계`}><span className={time > 0 ? 'done' : ''}>1</span><span className={time > 1 ? 'done' : ''}>2</span><span className={time > 2 ? 'done' : ''}>3</span></div>
-      <button className="action-control" disabled={time >= 3} onClick={() => setTime((old) => Math.min(3, old + 1))}><Clock3 size={20} /> {time >= 3 ? '관찰 완료' : '시간 보내기'}</button>
+      <button className="action-control" disabled={time >= 3} onClick={() => { recordTrial('heat', `시간 ${time + 1}단계 · 28°C / 15°C`, '따뜻한 곳의 얼음이 서늘한 곳보다 더 많이 작아졌어요.'); setTime((old) => Math.min(3, old + 1)); }}><Clock3 size={20} /> {time >= 3 ? '관찰 완료' : '시간 보내기'}</button>
       <PrimaryButton tone="heat" disabled={time < 3} onClick={() => setStep(3)}>녹은 정도 비교하기</PrimaryButton>
     </section>}
 

@@ -1,11 +1,13 @@
 'use client';
 
 import { Check, FlaskConical, MousePointerClick } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
 import { ScientistGuide } from '@/components/ScientistGuide';
 import { SuccessScreen } from '@/components/SuccessScreen';
+import { TrialVisual } from '@/components/TrialVisual';
 import type { ExtraExperimentConfig } from '@/lib/extraExperiments';
 
 export default function ExtraExperiment({ config }: { config: ExtraExperimentConfig }) {
@@ -16,6 +18,8 @@ export default function ExtraExperiment({ config }: { config: ExtraExperimentCon
   const activeTrial = config.trials.find((trial) => trial.id === active);
 
   function runTrial(id: string) {
+    const trial = config.trials.find((item) => item.id === id);
+    if (trial) recordTrial(config.id, trial.name, trial.result);
     setActive(id);
     setTested((old) => old.includes(id) ? old : [...old, id]);
   }
@@ -45,7 +49,7 @@ export default function ExtraExperiment({ config }: { config: ExtraExperimentCon
       <div className="stage-heading"><span><MousePointerClick size={20} /> {config.actionGuide}</span><h1>{config.actionTitle}</h1></div>
       <div className={`extra-lab ${config.id}`}>
         <div className="extra-trials">{config.trials.map((trial) => <button className={tested.includes(trial.id) ? 'tested' : ''} onClick={() => runTrial(trial.id)} key={trial.id}><span>{trial.icon}</span><strong>{trial.name}</strong><small>{tested.includes(trial.id) ? '관찰 완료' : '실험하기'}</small></button>)}</div>
-        <div className={`extra-result ${activeTrial ? 'active' : ''}`} aria-live="polite">{activeTrial ? <><span>{activeTrial.resultIcon}</span><strong>{activeTrial.name}</strong><p>{activeTrial.result}</p></> : <><span>{config.icon}</span><strong>실험할 조건을 골라 봐</strong><p>누르면 이곳에서 변화가 보여요.</p></>}</div>
+        <div className={`extra-result ${activeTrial ? 'active' : ''}`} aria-live="polite">{activeTrial ? <><TrialVisual key={activeTrial.id} experiment={config.id} trial={activeTrial} /><strong>{activeTrial.name}</strong><p>{activeTrial.result}</p><small>다른 조건을 고르거나 같은 조건을 다시 시험해 비교하세요.</small></> : <><span>{config.icon}</span><strong>실험할 조건을 골라 봐</strong><p>누르면 이곳에서 변화가 보여요.</p></>}</div>
       </div>
       <div className="trial-status"><span className={tested.length === config.trials.length ? 'done' : ''}>{tested.length} / {config.trials.length} 관찰 완료</span></div>
       <PrimaryButton tone={config.id} disabled={tested.length < config.trials.length} onClick={() => setStep(3)}>결과 비교하기</PrimaryButton>

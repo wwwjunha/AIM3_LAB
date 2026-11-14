@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Clock3, Droplets } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -46,7 +47,7 @@ export default function PlantExperiment() {
       </div>
       <div className="color-picker" aria-label="물 색깔 고르기">{colors.map((item) => <button className={color.name === item.name ? 'selected' : ''} style={{ backgroundColor: item.value }} onClick={() => { setColor(item); setTime(0); }} aria-label={`${item.name} 물`} key={item.name} />)}</div>
       <p className="observation-message">{time === 0 ? '아직 흰 꽃이야. 시간을 보내 볼까?' : time < 3 ? '줄기를 따라 색깔 물이 조금씩 올라가고 있어!' : `꽃잎 가장자리에 ${color.name}색이 보이기 시작했어!`}</p>
-      <button className="action-control" disabled={time >= 3} onClick={() => setTime((old) => Math.min(3, old + 1))}><Clock3 size={20} /> {time >= 3 ? '관찰 완료' : '시간 보내기'}</button>
+      <button className="action-control" disabled={time >= 3} onClick={() => { recordTrial('plant', `${color.name} 물 · 시간 ${time + 1}단계`, time + 1 < 3 ? '색깔 물이 줄기를 따라 이동해요.' : '꽃잎 가장자리에 색이 보여요.'); setTime((old) => Math.min(3, old + 1)); }}><Clock3 size={20} /> {time >= 3 ? '관찰 완료' : '시간 보내기'}</button>
       <PrimaryButton tone="plant" disabled={time < 3} onClick={() => setStep(3)}>변화 확인하기</PrimaryButton>
     </section>}
 
