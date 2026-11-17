@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Music2, Volume2 } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useRef, useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -24,6 +25,8 @@ export default function SoundExperiment() {
   const pointerY = useRef(0);
 
   function pluck(id: StringId, frequency: number) {
+    const item = strings.find((item) => item.id === id);
+    if (item) recordTrial('sound', `${item.label} 줄`, `${item.sound} · 합성음 ${frequency}Hz`);
     void playStringTone(frequency);
     setActive(id);
     setPull(0);

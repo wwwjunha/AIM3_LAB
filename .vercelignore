@@ -2,3 +2,5 @@
 tmp/
 expo-assets/
 tsconfig.tsbuildinfo
+outputs/
+.claude/

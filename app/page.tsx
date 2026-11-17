@@ -4,6 +4,7 @@ import { ArrowRight, Check, FlaskConical, Glasses, RotateCcw, Sparkles, Star } f
 import { useEffect, useState } from 'react';
 import { getProgress } from '@/lib/progress';
 import { experimentIds } from '@/types/experiment';
+import { lessonAreas, lessonCatalog } from '@/lib/lessonCatalog';
 
 const experiments = [
   { id: 'force', title: '힘 연구소', prompt: '밀어보면 뭐가 다를까?', level: '쉬워요', mark: '📦', accent: 'var(--force)', pale: 'var(--force-pale)' },
@@ -28,6 +29,8 @@ const experiments = [
 
 export default function Home() {
   const [completed, setCompleted] = useState<string[]>([]);
+  const [area, setArea] = useState('전체');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     setCompleted(experiments.filter(({ id }) => localStorage.getItem(`${id}Completed`) === 'true').map(({ id }) => id));
@@ -71,6 +74,7 @@ export default function Home() {
           <Star size={21} fill="currentColor" /><span>나의 별</span><strong>{completed.length} / {experiments.length}</strong>
         </div>
       </header>
+      <nav className="home-learning-nav"><a href="/lessons">📚 전체 수업자료</a><a href="/classroom">🧑‍🏫 수업 준비</a><a href="/pilot">📝 처음 쓰는 선생님</a><a href="/discoveries">⭐ 나의 발견 · 리포트</a><a className="business-nav-link" href="/business">🏫 기관 도입</a></nav>
 
       <section className="home-intro" aria-labelledby="home-title">
         <div className="intro-copy">
@@ -94,8 +98,10 @@ export default function Home() {
           <div><span>LAB MAP</span><h2 id="lab-heading">어디부터 가볼까?</h2></div>
           <p>마음에 드는 실험을 골라 봐.</p>
         </div>
+        <div className="lab-filters"><label>실험 찾기<input type="search" placeholder="자석, 물질, 전기…" value={search} onChange={(e) => setSearch(e.target.value)} /></label><label>주제<select value={area} onChange={(e) => setArea(e.target.value)}>{['전체', ...lessonAreas].map((item) => <option key={item}>{item}</option>)}</select></label></div>
         <div className="lab-grid">
-          {experiments.map((experiment, index) => {
+          {experiments.filter((item) => (area === '전체' || lessonCatalog[item.id].area === area) && `${item.title} ${item.prompt} ${lessonCatalog[item.id].concept}`.includes(search.trim())).map((experiment) => {
+            const index = experiments.findIndex((item) => item.id === experiment.id);
             const isComplete = completed.includes(experiment.id);
             return (
               <article className="lab-card" key={experiment.id} style={{ '--lab-accent': experiment.accent, '--lab-pale': experiment.pale } as React.CSSProperties}>
@@ -103,6 +109,7 @@ export default function Home() {
                 <div className="experiment-mark" aria-hidden="true">{experiment.mark}</div>
                 <h3>{experiment.title}</h3>
                 <p>{experiment.prompt}</p>
+                <div className="lab-metadata"><span>{lessonCatalog[experiment.id].area} · 약 {lessonCatalog[experiment.id].minutes}분</span><a href={`/lessons?id=${experiment.id}`}>지도안 · 활동지 ↗</a></div>
                 <div className="card-footer">
                   <span className="level"><Star size={17} fill="currentColor" /> {experiment.level}</span>
                   <div className="card-actions">
@@ -122,6 +129,7 @@ export default function Home() {
             );
           })}
         </div>
+        {!experiments.some((item) => (area === '전체' || lessonCatalog[item.id].area === area) && `${item.title} ${item.prompt} ${lessonCatalog[item.id].concept}`.includes(search.trim())) && <p className="lesson-note">찾는 실험이 없어요. 검색어나 주제를 바꿔 주세요.</p>}
       </section>
     </main>
   );

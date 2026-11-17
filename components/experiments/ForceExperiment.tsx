@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, Gauge, Hand, Scale, SlidersHorizontal, Target } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -73,6 +74,7 @@ export default function ForceExperiment() {
       setRecordFeedback('눈금에 표시된 숫자를 다시 확인해 보세요.');
       return;
     }
+    if (pendingTrial) recordTrial('force', `${boxLabels[pendingTrial.mass]} · 힘 ${pendingTrial.force}`, `${pendingTrial.distance}칸 이동`);
     setFairTrials((old) => [...old, pendingTrial]);
     setPendingTrial(null);
     setRecordedDistance('');
@@ -86,6 +88,7 @@ export default function ForceExperiment() {
       return;
     }
     const trial = { mass: comparisonMass, force: comparisonForce, distance: travelDistance(comparisonMass, comparisonForce) };
+    recordTrial('force', `${boxLabels[comparisonMass]} · 힘 ${comparisonForce}`, `${travelDistance(comparisonMass, comparisonForce)}칸 이동`);
     setForceTrials((old) => [...old, trial]);
     setForceFeedback(`${comparisonForce}의 힘으로 밀자 ${trial.distance}칸 움직였어요.`);
   }
@@ -94,6 +97,7 @@ export default function ForceExperiment() {
     if (mission >= targets.length) return;
     const distance = travelDistance(challengeMass, challengeForce);
     const success = Math.abs(distance - target) <= 3;
+    recordTrial('force', `목표 ${target}칸 · ${boxLabels[challengeMass]} · 힘 ${challengeForce}`, `${distance}칸 이동 · ${success ? '목표 도착' : '다시 조절'}`);
     setChallengeTrials((old) => [...old, { mass: challengeMass, force: challengeForce, distance, target, success }]);
     setChallengeDistance(distance);
     if (success) {

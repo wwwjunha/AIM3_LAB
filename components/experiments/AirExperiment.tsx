@@ -1,6 +1,7 @@
 'use client';
 
 import { Check, RotateCw, Waves } from 'lucide-react';
+import { recordTrial } from '@/lib/inquiry';
 import { useState } from 'react';
 import { ExperimentShell } from '@/components/ExperimentShell';
 import { PrimaryButton } from '@/components/PrimaryButton';
@@ -14,6 +15,7 @@ export default function AirExperiment() {
   const [tested, setTested] = useState<string[]>([]);
 
   function tryCup(next: 'upright' | 'tilted') {
+    recordTrial('air', next === 'upright' ? '컵을 똑바로 넣기' : '컵 기울이기', next === 'upright' ? '휴지가 마른 채로 있어요.' : '공기 방울이 나오고 물이 들어가요.');
     setCup(next);
     setTested((old) => old.includes(next) ? old : [...old, next]);
   }

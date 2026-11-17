@@ -76,7 +76,7 @@ export const extraExperiments = {
       { id: 'dry', icon: '🌰🏜️', name: '물 없이 따뜻하게', result: '마른 씨앗은 거의 변하지 않았어요.', resultIcon: '🌰' },
       { id: 'cold', icon: '💧🌰❄️', name: '촉촉하지만 차갑게', result: '같은 시간 동안 싹트는 변화가 매우 느렸어요.', resultIcon: '🧊' },
     ],
-    discoveryGuide: '씨앗이 싹트는 데에는 알맞은 물과 온도, 공기가 필요해!', discovery: '씨앗이 싹트려면 알맞은 양의 물과 온도, 공기가 필요해요.', skills: ['생명 변화 관찰', '조건 비교하기', '시간에 따른 변화 보기'],
+    discoveryGuide: '씨앗이 싹트는 데에는 알맞은 물과 온도, 공기가 필요해!', discovery: '이 실험에서는 알맞은 물과 따뜻한 온도가 있을 때 씨앗이 싹텄어요. 공기도 필요하지만 이 화면에서는 따로 비교하지 않았어요.', skills: ['생명 변화 관찰', '조건 비교하기', '시간에 따른 변화 보기'],
   },
   friction: {
     id: 'friction', title: '마찰 연구소', icon: '🛝', theme: 'friction-theme',
@@ -88,7 +88,7 @@ export const extraExperiments = {
       { id: 'wood', icon: '🏎️🪵', name: '나무판', result: '자동차가 중간 거리까지 이동했어요.', resultIcon: '📏📏' },
       { id: 'sandpaper', icon: '🏎️▪️', name: '거친 사포', result: '자동차가 금방 멈췄어요.', resultIcon: '📏' },
     ],
-    discoveryGuide: '거친 바닥에서는 움직임을 방해하는 마찰이 더 크게 작용해!', discovery: '바닥이 거칠수록 마찰이 커져 움직이는 물체가 더 빨리 멈출 수 있어요.', skills: ['공정하게 출발시키기', '거리 비교하기', '마찰 이해하기'],
+    discoveryGuide: '이 실험에서는 사포 바닥에서 움직임을 방해하는 마찰이 가장 크게 작용했어!', discovery: '같은 조건으로 출발해도 바닥 재료에 따라 마찰이 달라 자동차가 멈추는 거리가 달라져요. 이 실험에서는 사포에서 가장 빨리 멈췄어요.', skills: ['공정하게 출발시키기', '거리 비교하기', '마찰 이해하기'],
   },
   absorb: {
     id: 'absorb', title: '흡수 연구소', icon: '🧽', theme: 'absorb-theme',
@@ -119,12 +119,12 @@ export const extraExperiments = {
     id: 'surface', title: '표면 장력 연구소', icon: '🫧', theme: 'surface-theme',
     introGuide: '물 위 후추에 비누가 닿으면 무슨 일이 생길까?', question: '비누는 물 표면을 어떻게 바꿀까?',
     predictionGuide: '깨끗한 면봉과 비누 묻은 면봉을 비교해 봐.', predictionQuestion: '비누가 닿은 후추는?',
-    predictions: ['가장자리로 빠르게 움직여요', '그대로 있어요', '물속으로 모두 가라앉아요'], expectedPrediction: '가장자리로 빠르게 움직여요', actionGuide: '두 면봉을 물 가운데에 차례로 대 봐!', actionTitle: '물 표면의 변화를 비교하자',
+    predictions: ['가장자리로 빠르게 움직여요', '그대로 있어요', '물속으로 모두 가라앉아요'], expectedPrediction: '가장자리로 빠르게 움직여요', actionGuide: '각각 새 물에 면봉을 대어 비교해 봐!', actionTitle: '물 표면의 변화를 비교하자',
     trials: [
       { id: 'clean', icon: '⚪', name: '깨끗한 면봉', result: '후추가 거의 그대로 있었어요.', resultIcon: '••••' },
       { id: 'soap', icon: '🧼', name: '비누 묻은 면봉', result: '후추가 가장자리로 빠르게 퍼졌어요!', resultIcon: '•　　•' },
     ],
-    discoveryGuide: '비누가 물 표면의 당기는 힘을 약하게 만들었어!', discovery: '물 표면에는 서로 당기는 힘인 표면 장력이 있고, 비누는 이 힘을 약하게 만들 수 있어요.', skills: ['전후 비교하기', '빠른 변화 관찰', '원인 찾기'],
+    discoveryGuide: '비누가 물 표면의 당기는 힘을 약하게 만들었어!', discovery: '물 표면에는 서로 당기는 힘인 표면 장력이 있고, 비누가 닿은 부분의 표면 장력이 작아지면서 생긴 물의 흐름을 따라 후추가 움직여요.', skills: ['전후 비교하기', '빠른 변화 관찰', '원인 찾기'],
   },
   reaction: {
     id: 'reaction', title: '반응 연구소', icon: '🎈', theme: 'reaction-theme',
