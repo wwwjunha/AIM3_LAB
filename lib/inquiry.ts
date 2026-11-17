@@ -1,7 +1,8 @@
 import type { ExperimentId } from '@/types/experiment';
 
 export type Trial = { condition: string; result: string; at: string };
-export type Inquiry = { group: string; reason: string; changed: string; kept: string; observation: string; explanation: string; nextQuestion: string; trials: Trial[]; savedAt?: string };
+export type Inquiry = { group: string; reason: string; changed: string; kept: string; observation: string; explanation: string; nextQuestion: string; trials: Trial[]; savedAt?: string; challenge?: ChallengeResult };
+export type ChallengeResult = { correct: number; total: number; at: string };
 export const emptyInquiry = (): Inquiry => ({ group: '', reason: '', changed: '', kept: '', observation: '', explanation: '', nextQuestion: '', trials: [] });
 export function readInquiry(id: ExperimentId): Inquiry {
   if (typeof window === 'undefined') return emptyInquiry();

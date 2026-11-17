@@ -12,7 +12,7 @@ function slidesFor(id: ExperimentId, title: string): Slide[] {
   const lesson = lessonCatalog[id];
   return [
     { title: `안녕! 나는 콩콩 박사야`, text: `오늘은 ${title}에서 같이 실험해 볼 거야. 화면을 하나씩 보여 줄게.` },
-    { target: '.stepper', title: '실험은 다섯 단계야', text: '궁금해요 → 예상해요 → 실험해요 → 발견했어요 → 성공! 지금 어디쯤인지 여기서 볼 수 있어.' },
+    { target: '.stepper', title: '실험은 일곱 단계야', text: '궁금해요 → 예상해요 → 실험해요 → 정리해요 → 발견했어요 → 도전해요 → 성공! 지금 어디쯤인지 여기서 볼 수 있어.' },
     { target: '.experiment-stage', title: '여기서 직접 실험해', text: `가운데 화면을 누르고 움직여 봐. 이 실험에서는 이렇게 해 보자: ${lesson.observe}` },
     { target: '.experiment-stage .primary-button', title: '다 했으면 큰 버튼!', text: '한 단계를 마치면 아래쪽 큰 버튼을 눌러 다음 단계로 가. 아직 할 일이 남았으면 버튼이 흐리게 보여.' },
     { target: '.inquiry-panel', title: '탐구 노트에 기록이 쌓여', text: '실험에서 조작한 조건과 결과는 자동으로 적혀. 내 예상의 이유와 설명은 직접 써 줘.' },

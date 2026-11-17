@@ -10,7 +10,13 @@ export function InquiryNotebook({ id }: { id: ExperimentId }) {
   const [status, setStatus] = useState('');
   const [choice, setChoice] = useState('');
   const lesson = lessonCatalog[id];
-  useEffect(() => { setDraft(readInquiry(id)); const refresh = () => setDraft((old) => ({ ...old, trials: readInquiry(id).trials })); window.addEventListener('inquiry-updated', refresh); return () => window.removeEventListener('inquiry-updated', refresh); }, [id]);
+  useEffect(() => { setDraft(readInquiry(id)); const refresh = () => setDraft((old) => {
+      // Pick up new trials and any notes the guided stages filled in, without overwriting what the child is typing.
+      const stored = readInquiry(id);
+      const merged = { ...old, trials: stored.trials, challenge: stored.challenge };
+      for (const key of ['group', 'reason', 'changed', 'kept', 'observation', 'explanation', 'nextQuestion'] as const) if (!old[key].trim() && stored[key]) merged[key] = stored[key];
+      return merged;
+    }); window.addEventListener('inquiry-updated', refresh); return () => window.removeEventListener('inquiry-updated', refresh); }, [id]);
   const fields = [['group', '조 번호 또는 별명', '이름 대신 1조, 별빛 연구원처럼 적어도 좋아요.'], ['reason', '처음 그렇게 예상한 이유', '내가 알고 있던 것과 연결해 봐요.'], ['changed', '내가 바꾼 조건', lesson.change], ['kept', '같게 유지한 조건', lesson.keep], ['observation', '직접 관찰한 결과', lesson.observe], ['explanation', '관찰을 근거로 한 내 설명', '어떤 결과를 보고 그렇게 생각했나요?'], ['nextQuestion', '다음에 알아보고 싶은 것', lesson.challenge]] as const;
   function save() { const next = { ...draft, trials: readInquiry(id).trials, savedAt: new Date().toISOString() }; setDraft(next); setStatus(saveInquiry(id, next) ? '이 기기에 저장했어요.' : '저장 공간을 사용할 수 없어요. 입력 내용을 복사해 주세요.'); }
   return <details className="inquiry-panel"><summary>📓 내 탐구 노트 <span>예상 · 비교 · 설명</span></summary><div className="inquiry-body">

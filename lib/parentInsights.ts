@@ -67,12 +67,14 @@ export function buildParentInsights(report: ExperimentReport, inquiry: Inquiry |
   if (inquiry?.changed.trim() && inquiry.kept.trim()) strengths.push('바꾼 조건과 같게 둔 조건을 구분해 적었어요. 공정한 비교의 핵심이에요.');
   if (inquiry?.explanation.trim()) strengths.push(`관찰을 근거로 자기 말로 설명했어요: ${quote(inquiry.explanation)}`);
   if (inquiry?.nextQuestion.trim()) strengths.push(`새로운 궁금증을 남겼어요: ${quote(inquiry.nextQuestion)}`);
+  if (inquiry?.challenge) strengths.push(`오늘 발견을 새로운 생활 속 상황 ${inquiry.challenge.total}개에 적용해 보고, ${inquiry.challenge.correct}개를 한 번에 맞혔어요.`);
   if (!strengths.length) strengths.push('궁금해요부터 발견했어요까지 실험 단계를 끝까지 마쳤어요.');
 
   const nextSteps: string[] = [];
   if (!inquiry?.explanation.trim()) nextSteps.push('“왜 그렇게 됐을까?”라고 물어봐 주세요. 정답보다 아이가 본 결과를 근거로 말하는 것이 중요해요.');
   if (!inquiry?.reason.trim()) nextSteps.push('다음 실험 전에는 “어떻게 될 것 같아? 왜 그렇게 생각해?”를 먼저 물어봐 주세요.');
   if (!(inquiry?.changed.trim() && inquiry.kept.trim())) nextSteps.push(`이 실험에서 바꾼 것은 ‘${lesson.change}’, 같게 둔 것은 ‘${lesson.keep}’이에요. 집에서 비교 놀이를 할 때 함께 짚어 주세요.`);
+  if (inquiry?.challenge && inquiry.challenge.correct < inquiry.challenge.total) nextSteps.push('도전 문제 중 헷갈렸던 상황을 집에서 실제 물건으로 함께 확인해 보세요.');
   if (distinct < 2) nextSteps.push('결과를 하나만 보기보다 다른 조건과 나란히 비교해 보도록 권해 주세요.');
 
   return { summary, trials, minutes, strengths, nextSteps: nextSteps.slice(0, 3), checkPoint: lesson.misconception, challenge: lesson.challenge };
